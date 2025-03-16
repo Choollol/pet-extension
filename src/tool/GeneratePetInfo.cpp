@@ -5,7 +5,8 @@
 #include "ToolUtil.hpp"
 
 struct PetInfo {
-    std::string name;
+    std::string internalName;
+    std::string externalName;
     unsigned idleSpriteCount;
     unsigned moveSpriteCount;
 };
@@ -16,7 +17,7 @@ int main() {
     std::string outputDir = "../assets/data";
 
     std::vector<PetInfo> petInfo = {
-        {"Test Pet", 2, 2}};
+        {"testPet", "Test Pet", 2, 2}};
 
     generatePetInfo(outputDir, "pet-info", "ts", petInfo);
 }
@@ -27,7 +28,7 @@ int main() {
 void generateSpritePaths(std::ofstream& writer, const PetInfo& pet, const std::string& spriteType) {
     writer << "\t\t" << spriteType << "_sprites: [\n";
     for (unsigned i = 1; i <= pet.idleSpriteCount; ++i) {
-        writer << "\t\t\tbrowser.runtime.getURL(\"/pet_sprites/" << toSnakeCase(pet.name) << "/" << spriteType << "/" << toSnakeCase(pet.name, true) << "_" << toSnakeCase(spriteType, true) << "_" << i << ".png\"),\n";
+        writer << "\t\t\tbrowser.runtime.getURL(\"/pet_sprites/" << toSnakeCase(pet.internalName) << "/" << spriteType << "/" << toSnakeCase(pet.internalName, true) << "_" << toSnakeCase(spriteType, true) << "_" << i << ".png\"),\n";
     }
     writer << "\t\t],\n";
 }
@@ -40,10 +41,10 @@ void generatePetInfo(const std::string& outputDir, const std::string& fileName, 
     writer << "export const petInfo = {\n";
 
     for (PetInfo pet : petInfo) {
-        writer << "\t" << titleToCamelCase(pet.name) << ": {\n";
+        writer << "\t" << titleToCamelCase(pet.internalName) << ": {\n";
 
         // Pet name
-        writer << "\t\tname: \"" << pet.name << "\",\n";
+        writer << "\t\tname: \"" << pet.externalName << "\",\n";
 
         // Idle sprite paths
         generateSpritePaths(writer, pet, "idle");
@@ -51,7 +52,7 @@ void generatePetInfo(const std::string& outputDir, const std::string& fileName, 
         // Move sprite paths
         generateSpritePaths(writer, pet, "move");
 
-        writer << "}\n";
+        writer << "\t}\n";
     }
 
     writer << "};\n";

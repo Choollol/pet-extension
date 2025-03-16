@@ -2,7 +2,8 @@ import { PET_POSITION_KEY } from "@/utils/storage-keys";
 import styles from "./Pet.module.css";
 import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
-import { petInfo } from "@/assets/data/pet-info";
+import { petInfo, SinglePetData } from "@/assets/data/pet-info";
+import { toSnakeCase } from "@/utils/string-utils";
 
 enum PetMotionState {
   IDLE,
@@ -27,9 +28,7 @@ const Pet = () => {
 
   useEffect(() => {
     browser.runtime.onMessage.addListener((message) => {
-      /* if (message.type === MessageType.STORE_PET_POSITION) {
-        storePosition();
-      } else  */ if (message.type === MessageType.LOAD_PET_POSITION) {
+      if (message.type === MessageType.LOAD_PET_POSITION) {
         loadPosition();
       }
     });
@@ -43,8 +42,8 @@ const Pet = () => {
 
   return (
     <div className={styles["pet-container"]} style={positionStyle}>
-      <img src={petInfo.testPet.idle_sprites[0]} />
-      {/* {petInfo.testPet.idle_sprites[0]} */}
+      {/* <img src={petInfo.testPet.idle_sprites[0]} /> */}
+      <img src={getPetSprite("testPet", motionState, 0)} />
       <button
         onClick={() => {
           const newPosition = { x: position.x + 10, y: position.y };
@@ -57,5 +56,15 @@ const Pet = () => {
     </div>
   );
 };
+
+function getPetSprite(
+  petInternalName: keyof typeof petInfo,
+  motionState: PetMotionState,
+  spriteIndex: number
+): string {
+  return petInfo[petInternalName][
+    `${PetMotionState[motionState].toLowerCase()}_sprites` as keyof SinglePetData
+  ][spriteIndex];
+}
 
 export default Pet;

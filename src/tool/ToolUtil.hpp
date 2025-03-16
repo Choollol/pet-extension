@@ -24,7 +24,7 @@ std::string titleToCamelCase(const std::string& s) {
         }
     }
     return result;
-} 
+}
 
 /**
  * @param doCapitalize Whether the first letter of each "word" should be capitalized. Example: sample title -> Sample_Title
@@ -42,6 +42,10 @@ std::string toSnakeCase(const std::string& s, const bool doCapitalize = false) {
         else if (doCapitalize && doUpper) {
             result += toupper(c);
             doUpper = false;
+        }
+        else if (isupper(c)) {
+            result += '_';
+            result += doCapitalize ? c : tolower(c);
         }
         else {
             result += tolower(c);

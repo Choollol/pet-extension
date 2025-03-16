@@ -1,33 +1,24 @@
-export function titleToSnakeCase(str: string) {
-  let output = ""
-  for (let i = 0; i < str.length; ++i) {
-    if (str[i] === " ") {
-      output += "_";
-    }
-    else {
-      output += str[i].toLowerCase();
-    }
-  }
-  return output;
-}
+export function toSnakeCase(s: string, doCapitalize: boolean = false): string {
+  let result = "";
 
-export function titleToPascalSnakeCase(str: string) {
-  let output = ""
-  let doCapitalize = true;
-  for (let i = 0; i < str.length; ++i) {
-    if (str[i] === " ") {
-      output += "_";
-      doCapitalize = true;
+  let doUpper = true;
+
+  for (const c of s) {
+    if (c == ' ' || c == '_') {
+      result += '_';
+      doUpper = true;
+    }
+    else if (doCapitalize && doUpper) {
+      result += c.toUpperCase();
+      doUpper = false;
+    }
+    else if (c === c.toUpperCase()) {
+      result += '_';
+      result += doCapitalize ? c : c.toLowerCase();
     }
     else {
-      if (doCapitalize) {
-        output += str[i].toUpperCase();
-        doCapitalize = false;
-      }
-      else {
-        output += str[i].toLowerCase();
-      }
+      result += c.toLowerCase();
     }
   }
-  return output;
+  return result;
 }
