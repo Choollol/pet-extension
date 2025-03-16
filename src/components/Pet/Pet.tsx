@@ -4,8 +4,14 @@ import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
 import { petInfo } from "@/assets/data/pet-info";
 
+enum PetMotionState {
+  IDLE,
+  MOVING,
+}
+
 const Pet = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [motionState, setMotionState] = useState(PetMotionState.IDLE);
 
   const loadPosition = async () => {
     const storedPosition = await storage.getItem<Position>(PET_POSITION_KEY);
@@ -37,7 +43,7 @@ const Pet = () => {
 
   return (
     <div className={styles["pet-container"]} style={positionStyle}>
-      <img src={petInfo.testPet.idle_sprites[0]}/>
+      <img src={petInfo.testPet.idle_sprites[0]} />
       {/* {petInfo.testPet.idle_sprites[0]} */}
       <button
         onClick={() => {

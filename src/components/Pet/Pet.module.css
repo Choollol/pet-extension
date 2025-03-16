@@ -2,4 +2,6 @@
     position: fixed;
 
     bottom: 0px;
+
+    z-index: 10000;
 }

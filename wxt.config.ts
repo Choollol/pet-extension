@@ -7,5 +7,6 @@ export default defineConfig({
   srcDir: "src",
   manifest: {
     permissions: ["scripting", "tabs", "activeTab", "storage"],
+    web_accessible_resources: ["pet_sprites/*.png"]
   },
 });
