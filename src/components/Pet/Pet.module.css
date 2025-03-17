@@ -1,7 +1,11 @@
 .pet-container {
-    position: fixed;
+  position: fixed;
 
-    bottom: 0px;
+  bottom: 0px;
 
-    z-index: 10000;
+  z-index: 10000;
+}
+
+.flip-horizontal {
+  transform: scaleX(-1);
 }

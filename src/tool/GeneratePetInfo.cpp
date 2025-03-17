@@ -9,6 +9,7 @@ struct PetInfo {
     std::string externalName;
     unsigned idleSpriteCount;
     unsigned moveSpriteCount;
+    unsigned moveSpeed = 20;
     unsigned frameLengthMs = 1000;
 };
 
@@ -56,6 +57,8 @@ void generatePetInfo(const std::string& outputDir, const std::string& fileName, 
 
         // Length of each frame
         generateObjectProperty(writer, 2, "frameLengthMs", pet.frameLengthMs);
+        
+        generateObjectProperty(writer, 2, "moveSpeed", pet.moveSpeed);
 
         writer << "\t}\n";
     }
@@ -94,6 +97,7 @@ void generateSpriteInfoTypes(std::ofstream& writer) {
     generateObjectProperty(writer, 1, "idle_sprites", "string[]");
     generateObjectProperty(writer, 1, "move_sprites", "string[]");
     generateObjectProperty(writer, 1, "frameLengthMs", "number");
+    generateObjectProperty(writer, 1, "moveSpeed", "number");
 
     writer << "}\n\n";
 }

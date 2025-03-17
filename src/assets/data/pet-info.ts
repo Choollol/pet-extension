@@ -3,6 +3,7 @@ export type SinglePetInfo = {
 	idle_sprites: string[],
 	move_sprites: string[],
 	frameLengthMs: number,
+	moveSpeed: number,
 }
 
 export const petInfo: { [petName: string]: SinglePetInfo } = {
@@ -17,5 +18,6 @@ export const petInfo: { [petName: string]: SinglePetInfo } = {
 			browser.runtime.getURL("/pet_sprites/test_pet/move/Test_Pet_Move_2.png"),
 		],
 		frameLengthMs: 1000,
+		moveSpeed: 20,
 	}
 };

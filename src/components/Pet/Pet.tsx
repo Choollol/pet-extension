@@ -2,24 +2,25 @@ import { PET_POSITION_KEY } from "@/utils/storage-keys";
 import styles from "./Pet.module.css";
 import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
-import { petInfo, SinglePetInfo } from "@/assets/data/pet-info";
-
-enum PetMotionState {
-  IDLE,
-  MOVE,
-}
+import { petInfo } from "@/assets/data/pet-info";
+import { PetMotionState } from "@/utils/pet-utils";
 
 const TEST_PET_NAME = "testPet";
 
 const Pet = () => {
   const [currentPetName, setCurrentPetName] = useState(TEST_PET_NAME);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [motionState, setMotionState] = useState(PetMotionState.IDLE);
   const [frameNumber, setFrameNumber] = useState(0);
-  const elapsedTimeRef = useRef(0);
+  const frameElapsedTimeRef = useRef(0);
   const previousTimeRef = useRef(0);
 
-  const loadPosition = async () => {
+  const motionStateRef = useRef(PetMotionState.IDLE);
+
+  const timeUntilMotionStateChangeMsRef = useRef(3000);
+
+  const moveDirectionRef = useRef(1);
+
+  const loadData = async () => {
     const storedPosition = await storage.getItem<Position>(PET_POSITION_KEY);
     if (!storedPosition) {
       return;
@@ -30,24 +31,81 @@ const Pet = () => {
     });
   };
 
+  const changeMotionState = () => {
+    motionStateRef.current =
+      motionStateRef.current === PetMotionState.IDLE
+        ? PetMotionState.MOVE
+        : PetMotionState.IDLE;
+    timeUntilMotionStateChangeMsRef.current = 3000;
+
+    moveDirectionRef.current = Math.random() < 0.5 ? 1 : -1;
+
+    frameElapsedTimeRef.current = 0;
+    setFrameNumber((frameNumber) => 0);
+  };
+
   const nextSprite = () => {
     setFrameNumber((frameNumber) =>
-      frameNumber + 1 >= getPetSpriteList(currentPetName, motionState).length
+      frameNumber + 1 >=
+      getPetSpriteList(currentPetName, motionStateRef.current).length
         ? 0
         : frameNumber + 1
     );
   };
 
+  const boundPosition = () => {
+    setPosition((position) => {
+      if (position.x <= 0) {
+        return {
+          x: 0,
+          y: position.y,
+        };
+      }
+      if (position.x >= window.innerWidth - 32) {
+        return {
+          x: window.innerWidth - 32,
+          y: position.y,
+        };
+      }
+      return position;
+    });
+  };
+
   const update = (time: number) => {
     if (previousTimeRef.current !== 0) {
-      const deltaTime = time - previousTimeRef.current;
+      const deltaTimeMs = time - previousTimeRef.current;
+      const deltaTimeSecs = deltaTimeMs / 1000;
 
-      if (elapsedTimeRef.current >= petInfo[currentPetName].frameLengthMs) {
-        nextSprite();
-        elapsedTimeRef.current = 0;
+      if (timeUntilMotionStateChangeMsRef.current <= 0) {
+        changeMotionState();
       }
 
-      elapsedTimeRef.current += deltaTime;
+      if (
+        frameElapsedTimeRef.current >= petInfo[currentPetName].frameLengthMs
+      ) {
+        nextSprite();
+        frameElapsedTimeRef.current = 0;
+      }
+
+      if (motionStateRef.current === PetMotionState.MOVE) {
+        setPosition((position) => {
+          const newPosition = {
+            ...position,
+            x:
+              position.x +
+              petInfo[currentPetName].moveSpeed *
+                moveDirectionRef.current *
+                deltaTimeSecs,
+          };
+          storage.setItem(PET_POSITION_KEY, newPosition);
+          return newPosition;
+        });
+      }
+
+      boundPosition();
+
+      timeUntilMotionStateChangeMsRef.current -= deltaTimeMs;
+      frameElapsedTimeRef.current += deltaTimeMs;
     }
     previousTimeRef.current = time;
 
@@ -57,10 +115,10 @@ const Pet = () => {
   useEffect(() => {
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === MessageType.LOAD_PET_POSITION) {
-        loadPosition();
+        loadData();
       }
     });
-    loadPosition();
+    loadData();
     window.requestAnimationFrame(update);
   }, []);
 
@@ -70,38 +128,19 @@ const Pet = () => {
   };
 
   return (
-    <div className={styles["pet-container"]} style={positionStyle}>
-      <img src={getPetSprite(currentPetName, motionState, frameNumber)} />
-      <button
-        onClick={() => {
-          const newPosition = { x: position.x + 10, y: position.y };
-          setPosition(newPosition);
-          storage.setItem(PET_POSITION_KEY, newPosition);
-        }}
-      >
-        Move
-      </button>
+    <div
+      className={`${styles["pet-container"]} ${
+        moveDirectionRef.current === -1 && styles["flip-horizontal"]
+      }`}
+      style={positionStyle}
+    >
+      <img
+        src={getPetSprite(currentPetName, motionStateRef.current, frameNumber)}
+      />
     </div>
   );
 };
 
-function getPetSprite(
-  petInternalName: keyof typeof petInfo,
-  motionState: PetMotionState,
-  spriteIndex: number
-): string {
-  return getPetSpriteList(petInternalName, motionState)[spriteIndex];
-}
 
-function getPetSpriteList(
-  petInternalName: keyof typeof petInfo,
-  motionState: PetMotionState
-): string[] {
-  return petInfo[petInternalName][
-    `${PetMotionState[
-      motionState
-    ].toLowerCase()}_sprites` as keyof SinglePetInfo
-  ] as string[];
-}
 
 export default Pet;
