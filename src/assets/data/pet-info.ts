@@ -18,6 +18,6 @@ export const petInfo: { [petName: string]: SinglePetInfo } = {
 			browser.runtime.getURL("/pet_sprites/test_pet/move/Test_Pet_Move_2.png"),
 		],
 		frameLengthMs: 1000,
-		moveSpeed: 20,
+		moveSpeed: 200,
 	}
 };
