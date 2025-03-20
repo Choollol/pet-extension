@@ -11,8 +11,15 @@ const Pet = () => {
   const elementRef = useRef<HTMLDivElement>(null);
 
   const [currentPetName, setCurrentPetName] = useState(TEST_PET_NAME);
+
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  // Use ref also so that saveData() can see updated position. It's called from useEffect() so it can't see updated states.
+  const positionRef = useRef(position);
+
   const [frameNumber, setFrameNumber] = useState(0);
+  // Use ref also so that saveData() can see updated frame number. It's called from useEffect() so it can't see updated states.
+  const frameNumberRef = useRef(frameNumber);
+
   const frameElapsedTimeRef = useRef(0);
   const previousTimeRef = useRef(0);
 
@@ -22,8 +29,22 @@ const Pet = () => {
 
   const moveDirectionRef = useRef(1);
 
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  const saveData = () => {
+    storage.setItem(PET_POSITION_KEY, positionRef.current);
+    storage.setItem(PET_MOTION_STATE_KEY, motionStateRef.current);
+    storage.setItem(
+      PET_TIME_UNTIL_MOTION_STATE_CHANGE_KEY,
+      timeUntilMotionStateChangeMsRef.current
+    );
+    storage.setItem(PET_MOVE_DIRECTION_KEY, moveDirectionRef.current);
+    storage.setItem(PET_FRAME_NUMBER_KEY, frameNumberRef.current);
+    storage.setItem(PET_FRAME_ELAPSED_TIME, frameElapsedTimeRef.current);
+  };
+
   const loadData = async () => {
-    // Load position
+    setIsDataLoaded(false);
     const [
       storedPosition,
       storedMotionState,
@@ -40,6 +61,7 @@ const Pet = () => {
       storage.getItem<number>(PET_FRAME_ELAPSED_TIME),
     ]);
     if (!storedPosition) {
+      setIsDataLoaded(true);
       return;
     }
 
@@ -47,24 +69,35 @@ const Pet = () => {
       x: storedPosition.x,
       y: storedPosition.y,
     });
+    positionRef.current = storedPosition;
+    // console.log("Loaded position: " + positionRef.current);
 
     if (storedMotionState != undefined) {
       motionStateRef.current = storedMotionState;
+      // console.log("Loaded motion state: " + motionStateRef.current);
     }
     if (storedTimeUntilMotionStateChange != undefined) {
       timeUntilMotionStateChangeMsRef.current =
         storedTimeUntilMotionStateChange;
+      // console.log("Loaded time until motion state change: " + timeUntilMotionStateChangeMsRef.current);
     }
     if (storedMoveDirection != undefined) {
       moveDirectionRef.current = storedMoveDirection;
+      // console.log("Loaded stored move direction: " + moveDirectionRef.current);
     }
     if (storedFrameNumber != undefined) {
-      console.log("stored frame number: " + storedFrameNumber);
       setFrameNumber(storedFrameNumber);
+      frameNumberRef.current = storedFrameNumber;
+      // console.log("Loaded frame number: " + frameNumberRef.current);
     }
     if (storedFrameElapsedTime != undefined) {
       frameElapsedTimeRef.current = storedFrameElapsedTime;
+      // console.log("Loaded frame elapsed time: " + frameElapsedTimeRef.current);
     }
+
+    setIsDataLoaded(true);
+
+    // console.log("Data loaded");
   };
 
   const setMotionState = (newMotionState: PetMotionState) => {
@@ -74,12 +107,7 @@ const Pet = () => {
 
     frameElapsedTimeRef.current = 0;
     setFrameNumber((_frameNumber) => 0);
-
-    storage.setItem(PET_MOTION_STATE_KEY, motionStateRef.current);
-    storage.setItem(
-      PET_TIME_UNTIL_MOTION_STATE_CHANGE_KEY,
-      timeUntilMotionStateChangeMsRef.current
-    );
+    frameNumberRef.current = 0;
   };
 
   const changeMotionState = () => {
@@ -90,8 +118,6 @@ const Pet = () => {
     );
 
     moveDirectionRef.current = Math.random() < 0.5 ? 1 : -1;
-
-    storage.setItem(PET_MOVE_DIRECTION_KEY, moveDirectionRef.current);
   };
 
   const nextSprite = () => {
@@ -101,7 +127,7 @@ const Pet = () => {
         getPetSpriteList(currentPetName, motionStateRef.current).length
           ? 0
           : frameNumber + 1;
-      storage.setItem(PET_FRAME_NUMBER_KEY, newFrameNumber);
+      frameNumberRef.current = newFrameNumber;
       return newFrameNumber;
     });
   };
@@ -126,6 +152,7 @@ const Pet = () => {
           y: position.y,
         };
       }
+      positionRef.current = position;
       return position;
     });
   };
@@ -156,7 +183,6 @@ const Pet = () => {
                 moveDirectionRef.current *
                 deltaTimeSecs,
           };
-          storage.setItem(PET_POSITION_KEY, newPosition);
           return newPosition;
         });
       }
@@ -165,12 +191,6 @@ const Pet = () => {
 
       timeUntilMotionStateChangeMsRef.current -= deltaTimeMs;
       frameElapsedTimeRef.current += deltaTimeMs;
-
-      storage.setItem(
-        PET_TIME_UNTIL_MOTION_STATE_CHANGE_KEY,
-        timeUntilMotionStateChangeMsRef.current
-      );
-      storage.setItem(PET_FRAME_ELAPSED_TIME, frameElapsedTimeRef.current);
     }
     previousTimeRef.current = time;
 
@@ -179,8 +199,10 @@ const Pet = () => {
 
   useEffect(() => {
     browser.runtime.onMessage.addListener((message) => {
-      if (message.type === MessageType.LOAD_PET_POSITION) {
+      if (message.type === MessageType.LOAD_PET_DATA) {
         loadData();
+      } else if (message.type === MessageType.STORE_PET_DATA) {
+        saveData();
       }
     });
     loadData();
@@ -192,17 +214,21 @@ const Pet = () => {
     bottom: position.y,
   };
 
+  const petClasses = `${styles["pet-container"]} ${
+    moveDirectionRef.current === -1 && styles["flip-horizontal"]
+  }`;
+
   return (
-    <div
-      ref={elementRef}
-      className={`${styles["pet-container"]} ${
-        moveDirectionRef.current === -1 && styles["flip-horizontal"]
-      }`}
-      style={positionStyle}
-    >
-      <img
-        src={getPetSprite(currentPetName, motionStateRef.current, frameNumber)}
-      />
+    <div ref={elementRef} className={petClasses} style={positionStyle}>
+      {isDataLoaded && (
+        <img
+          src={getPetSprite(
+            currentPetName,
+            motionStateRef.current,
+            frameNumber
+          )}
+        />
+      )}
     </div>
   );
 };

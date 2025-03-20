@@ -9,8 +9,8 @@ export default defineBackground(() => {
 
   const updatePetPosition = async () => {
     const [tab] = await browser.tabs.query({ active: true });
-    browser.tabs.sendMessage(previousActiveTabId, { type: MessageType.STORE_PET_POSITION });
-    browser.tabs.sendMessage(tab.id!, { type: MessageType.LOAD_PET_POSITION });
+    browser.tabs.sendMessage(previousActiveTabId, { type: MessageType.STORE_PET_DATA });
+    browser.tabs.sendMessage(tab.id!, { type: MessageType.LOAD_PET_DATA });
     previousActiveTabId = tab.id!;
   }
 
