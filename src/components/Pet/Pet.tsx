@@ -2,8 +2,11 @@ import { PET_POSITION_KEY } from "@/utils/storage-keys";
 import styles from "./Pet.module.css";
 import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
-import { petInfo } from "@/assets/data/pet-info";
-import { PetMotionState } from "@/utils/pet-utils";
+import { petInfo, SinglePetInfo } from "@/assets/data/pet-info";
+import {
+  getMotionStateDuration,
+  PetMotionState,
+} from "@/utils/pet-utils";
 
 const TEST_PET_NAME = "testPet";
 
@@ -11,6 +14,7 @@ const Pet = () => {
   const elementRef = useRef<HTMLDivElement>(null);
 
   const [currentPetName, setCurrentPetName] = useState(TEST_PET_NAME);
+  const currentPetRef = useRef<SinglePetInfo>(petInfo[currentPetName]);
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   // Use ref also so that saveData() can see updated position. It's called from useEffect() so it can't see updated states.
@@ -103,7 +107,10 @@ const Pet = () => {
   const setMotionState = (newMotionState: PetMotionState) => {
     motionStateRef.current = newMotionState;
 
-    timeUntilMotionStateChangeMsRef.current = 4000;
+    timeUntilMotionStateChangeMsRef.current = getMotionStateDuration(
+      currentPetRef.current.activeLevel,
+      newMotionState
+    );
 
     frameElapsedTimeRef.current = 0;
     setFrameNumber((_frameNumber) => 0);
