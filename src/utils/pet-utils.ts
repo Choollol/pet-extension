@@ -37,7 +37,7 @@ export function getPetSpriteList(
 /**
  * @returns The time in milliseconds the pet should stay in the current motion state
  */
-export function getMotionStateDuration(activeLevel: number, motionState: PetMotionState): number {
+export function getMotionStateDuration(activeLevel: number): number {
   const range = motionStateDurationRangesSecs[activeLevel];
   // Multiply by 1000 to convert from seconds to milliseconds
   return getRandomInt(range[0], range[1]) * 1000;

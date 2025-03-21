@@ -3,10 +3,7 @@ import styles from "./Pet.module.css";
 import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
 import { petInfo, SinglePetInfo } from "@/assets/data/pet-info";
-import {
-  getMotionStateDuration,
-  PetMotionState,
-} from "@/utils/pet-utils";
+import { getMotionStateDuration, PetMotionState } from "@/utils/pet-utils";
 
 const TEST_PET_NAME = "testPet";
 
@@ -108,8 +105,7 @@ const Pet = () => {
     motionStateRef.current = newMotionState;
 
     timeUntilMotionStateChangeMsRef.current = getMotionStateDuration(
-      currentPetRef.current.activeLevel,
-      newMotionState
+      currentPetRef.current.activeLevel
     );
 
     frameElapsedTimeRef.current = 0;
