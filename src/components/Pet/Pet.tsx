@@ -200,6 +200,17 @@ const Pet = () => {
     window.requestAnimationFrame(update);
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    // Left click
+    if (event.type === "click") {
+    }
+    // Right click
+    else if (event.type === "contextmenu") {
+    }
+
+    event.preventDefault();
+  };
+
   useEffect(() => {
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === MessageType.LOAD_PET_DATA) {
@@ -222,7 +233,13 @@ const Pet = () => {
   }`;
 
   return (
-    <div ref={elementRef} className={petClasses} style={positionStyle}>
+    <div
+      ref={elementRef}
+      className={petClasses}
+      style={positionStyle}
+      onClick={handleClick}
+      onContextMenu={handleClick}
+    >
       {isDataLoaded && (
         <img
           src={getPetSprite(
