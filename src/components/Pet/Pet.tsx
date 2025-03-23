@@ -4,6 +4,8 @@ import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
 import { petInfo, SinglePetInfo } from "@/assets/data/pet-info";
 import { getMotionStateDuration, PetMotionState } from "@/utils/pet-utils";
+import { EVENT_PLAY_HEART_ANIMATION, triggerEvent } from "@/utils/event";
+import HeartReaction from "@/components/heart-reaction/HeartReaction";
 
 const TEST_PET_NAME = "testPet";
 
@@ -206,6 +208,7 @@ const Pet = () => {
     }
     // Right click
     else if (event.type === "contextmenu") {
+      triggerEvent(EVENT_PLAY_HEART_ANIMATION);
     }
 
     event.preventDefault();
@@ -249,6 +252,7 @@ const Pet = () => {
           )}
         />
       )}
+      <HeartReaction />
     </div>
   );
 };
