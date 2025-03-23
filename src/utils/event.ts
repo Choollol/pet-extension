@@ -10,5 +10,3 @@ export const triggerEvent = (eventName: string) => {
   const event = new Event(eventName);
   document.dispatchEvent(event);
 }
-
-export const EVENT_PLAY_HEART_ANIMATION = "play-heart";

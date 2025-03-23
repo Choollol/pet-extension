@@ -1,6 +1,12 @@
-export const reactionsData = {
+export type SingleReactionData = {
+  eventName: string,
+  sprites: string[],
+  frameLengthMs: number,
+}
+
+export const reactionsData: { [reactionName: string]: SingleReactionData } = {
   heartReaction: {
-    eventName: EVENT_PLAY_HEART_ANIMATION,
+    eventName: "PlayHeartReaction",
     sprites: [
       browser.runtime.getURL("/sprites/reaction_sprites/heart_reaction/Test_Heart_Reaction_1.png"),
       browser.runtime.getURL("/sprites/reaction_sprites/heart_reaction/Test_Heart_Reaction_2.png"),

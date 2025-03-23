@@ -4,8 +4,8 @@ import { Position } from "@/utils/types";
 import { MessageType } from "@/utils/message-utils";
 import { petData, SinglePetData } from "@/assets/data/pet-data";
 import { getMotionStateDuration, PetMotionState } from "@/utils/pet-utils";
-import { EVENT_PLAY_HEART_ANIMATION, triggerEvent } from "@/utils/event";
-import HeartReaction from "@/components/heart-reaction/HeartReaction";
+import { triggerEvent } from "@/utils/event";
+import HeartReaction from "@/components/Reactions/HeartReaction";
 
 const TEST_PET_NAME = "testPet";
 
