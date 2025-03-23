@@ -1,4 +1,4 @@
-import { petInfo, SinglePetInfo } from "@/assets/data/pet-info";
+import { petData, SinglePetData } from "@/assets/data/pet-data";
 import { getRandomInt } from "@/utils/number-utils";
 
 export enum PetMotionState {
@@ -16,7 +16,7 @@ const motionStateDurationRangesSecs = [
 ]
 
 export function getPetSprite(
-  petInternalName: keyof typeof petInfo,
+  petInternalName: keyof typeof petData,
   motionState: PetMotionState,
   spriteIndex: number
 ): string {
@@ -24,13 +24,13 @@ export function getPetSprite(
 }
 
 export function getPetSpriteList(
-  petInternalName: keyof typeof petInfo,
+  petInternalName: keyof typeof petData,
   motionState: PetMotionState
 ): string[] {
-  return petInfo[petInternalName][
+  return petData[petInternalName][
     `${PetMotionState[
       motionState
-    ].toLowerCase()}_sprites` as keyof SinglePetInfo
+    ].toLowerCase()}_sprites` as keyof SinglePetData
   ] as string[];
 }
 
