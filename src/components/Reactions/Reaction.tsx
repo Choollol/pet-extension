@@ -4,6 +4,7 @@ import {
 } from "@/assets/data/reactions-data";
 import { startListening } from "@/utils/event";
 import { waitForMilliseconds } from "@/utils/wait-utils";
+import styles from "./Reaction.module.css";
 
 interface Props {
   reactionName: string;
@@ -24,7 +25,8 @@ const Reaction = ({ reactionName, reactionData }: Props) => {
       setCurrentSprite((_) => getReactionSprite(reactionName, i));
       await waitForMilliseconds(reactionData.frameLengthMs);
     }
-
+    setCurrentSprite((_) => getReactionSprite(reactionName, 0));
+    
     isAnimationPlayingRef.current = false;
   };
 
@@ -32,7 +34,13 @@ const Reaction = ({ reactionName, reactionData }: Props) => {
     startListening(reactionData.eventName, playAnimation);
   }, []);
 
-  return <>{isAnimationPlayingRef.current && <img src={currentSprite} />}</>;
+  return (
+    <>
+      {isAnimationPlayingRef.current && (
+        <img className={styles["reaction-image"]} src={currentSprite} />
+      )}
+    </>
+  );
 };
 
 export default Reaction;
