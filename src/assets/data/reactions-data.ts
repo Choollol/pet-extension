@@ -16,3 +16,7 @@ export const reactionsData: { [reactionName: string]: SingleReactionData } = {
     frameLengthMs: 200,
   }
 }
+
+export const getReactionSprite = (reactionName: string, frameNumber: number) => {
+  return reactionsData[reactionName].sprites[frameNumber];
+}

@@ -6,6 +6,7 @@ import { petData, SinglePetData } from "@/assets/data/pet-data";
 import { getMotionStateDuration, PetMotionState } from "@/utils/pet-utils";
 import { triggerEvent } from "@/utils/event";
 import HeartReaction from "@/components/Reactions/HeartReaction";
+import { reactionsData } from "@/assets/data/reactions-data";
 
 const TEST_PET_NAME = "testPet";
 
@@ -208,7 +209,7 @@ const Pet = () => {
     }
     // Right click
     else if (event.type === "contextmenu") {
-      triggerEvent(EVENT_PLAY_HEART_ANIMATION);
+      triggerEvent(reactionsData.heartReaction.eventName);
     }
 
     event.preventDefault();
