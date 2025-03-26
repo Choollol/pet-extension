@@ -11,7 +11,8 @@ import { reactionsData } from "@/assets/data/reactions-data";
 const TEST_PET_NAME = "testPet";
 
 const Pet = () => {
-  const elementRef = useRef<HTMLDivElement>(null);
+  const petContainerRef = useRef<HTMLDivElement>(null);
+  const petImageRef = useRef<HTMLImageElement>(null);
 
   const [currentPetName, setCurrentPetName] = useState(TEST_PET_NAME);
   const currentPetRef = useRef<SinglePetData>(petData[currentPetName]);
@@ -139,11 +140,11 @@ const Pet = () => {
   };
 
   const boundPosition = () => {
-    if (!elementRef) {
+    if (!petContainerRef.current) {
       return;
     }
     setPosition((position) => {
-      const rightBound = window.innerWidth - elementRef.current!.clientWidth;
+      const rightBound = window.innerWidth - petContainerRef.current!.clientWidth;
       if (position.x < 0) {
         setMotionState(PetMotionState.IDLE);
         return {
@@ -232,20 +233,24 @@ const Pet = () => {
     bottom: position.y,
   };
 
-  const petClasses = `${styles["pet-container"]} ${
+  const petContainerClasses = `${styles["pet-container"]} ${
     moveDirectionRef.current === -1 && styles["flip-horizontal"]
   }`;
 
+  const petImageClasses = `${styles["pet-image"]}`;
+
   return (
     <div
-      ref={elementRef}
-      className={petClasses}
+      ref={petContainerRef}
+      className={petContainerClasses}
       style={positionStyle}
       onClick={handleClick}
       onContextMenu={handleClick}
     >
       {isDataLoaded && (
         <img
+          ref={petImageRef}
+          className={petImageClasses}
           src={getPetSprite(
             currentPetName,
             motionStateRef.current,

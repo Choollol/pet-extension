@@ -8,6 +8,15 @@
   bottom: 0px;
 
   z-index: 10000;
+
+  width: 4em;
+}
+
+.pet-image {
+  width: 100%;
+  height: auto;
+
+  image-rendering: pixelated;
 }
 
 .flip-horizontal {
