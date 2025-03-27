@@ -6,13 +6,21 @@ export enum PetMotionState {
   MOVE,
 }
 
-const motionStateDurationRangesSecs = [
+const idleStateDurationRangesSecs = [
   [0, 0],
   [60, 90],
   [30, 50],
   [30, 50],
   [10, 30],
   [3, 6],
+]
+
+const moveStateDurationRangesSecs = [
+  [0, 0],
+  [2, 4],
+  [3, 5],
+  [4, 7],
+  [6, 9],
 ]
 
 export function getPetSprite(
@@ -37,8 +45,14 @@ export function getPetSpriteList(
 /**
  * @returns The time in milliseconds the pet should stay in the current motion state
  */
-export function getMotionStateDuration(activeLevel: number): number {
-  const range = motionStateDurationRangesSecs[activeLevel];
+export function getMotionStateDuration(activeLevel: number, motionState: PetMotionState): number {
+  let range;
+  if (motionState === PetMotionState.IDLE) {
+    range = idleStateDurationRangesSecs[activeLevel];
+  }
+  else {
+    range = moveStateDurationRangesSecs[activeLevel];
+  }
   // Multiply by 1000 to convert from seconds to milliseconds
   return getRandomInt(range[0], range[1]) * 1000;
 }
