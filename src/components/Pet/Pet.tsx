@@ -11,6 +11,9 @@ import { reactionsData } from "@/assets/data/reactions-data";
 const TEST_PET_NAME = "testPet";
 
 const Pet = () => {
+  // Used to rerender component
+  const [_dummyState, setDummyState] = useState(0);
+
   const petContainerRef = useRef<HTMLDivElement>(null);
   const petImageRef = useRef<HTMLImageElement>(null);
 
@@ -35,6 +38,10 @@ const Pet = () => {
   const moveDirectionRef = useRef(1);
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  const triggerRerender = () => {
+    setDummyState((dummyState) => dummyState ^ 1);
+  };
 
   const saveData = () => {
     storage.setItem(PET_POSITION_KEY, positionRef.current);
@@ -107,9 +114,11 @@ const Pet = () => {
 
   const setMotionState = (newMotionState: PetMotionState) => {
     motionStateRef.current = newMotionState;
+    triggerRerender();
 
     timeUntilMotionStateChangeMsRef.current = getMotionStateDuration(
-      currentPetRef.current.activeLevel
+      currentPetRef.current.activeLevel,
+      newMotionState
     );
 
     frameElapsedTimeRef.current = 0;
@@ -144,7 +153,8 @@ const Pet = () => {
       return;
     }
     setPosition((position) => {
-      const rightBound = window.innerWidth - petContainerRef.current!.clientWidth;
+      const rightBound =
+        window.innerWidth - petContainerRef.current!.clientWidth;
       if (position.x < 0) {
         setMotionState(PetMotionState.IDLE);
         return {
