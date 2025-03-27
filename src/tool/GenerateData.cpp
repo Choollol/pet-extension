@@ -28,7 +28,9 @@ int main() {
     std::string outputDir = "../assets/data";
 
     std::vector<PetData> petData = {
-        {"testPet", "Test Pet", 2, 2, 5}};
+        {"testPet", "Test Pet", 2, 2, 5},
+        {"slime", "Slime", 2, 2, 3},
+    };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
 }
@@ -73,7 +75,7 @@ void generatePetData(const std::string& outputDir, const std::string& fileName, 
 
         generateObjectProperty(writer, 2, "moveSpeed", pet.moveSpeed);
 
-        writer << "\t}\n";
+        writer << "\t},\n";
     }
 
     writer << "};\n";

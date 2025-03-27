@@ -14,7 +14,7 @@ const Pet = () => {
   const petContainerRef = useRef<HTMLDivElement>(null);
   const petImageRef = useRef<HTMLImageElement>(null);
 
-  const [currentPetName, setCurrentPetName] = useState(TEST_PET_NAME);
+  const [currentPetName, setCurrentPetName] = useState("slime");
   const currentPetRef = useRef<SinglePetData>(petData[currentPetName]);
 
   const [position, setPosition] = useState({ x: 0, y: 0 });

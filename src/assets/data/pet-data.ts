@@ -23,5 +23,19 @@ export const petData: { [petName: string]: SinglePetData } = {
 		activeLevel: 5,
 		frameLengthMs: 1000,
 		moveSpeed: 20,
-	}
+	},
+	slime: {
+		name: "Slime",
+		idle_sprites: [
+			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_1.png"),
+			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_2.png"),
+		],
+		move_sprites: [
+			browser.runtime.getURL("/sprites/pet_sprites/slime/move/Slime_Move_1.png"),
+			browser.runtime.getURL("/sprites/pet_sprites/slime/move/Slime_Move_2.png"),
+		],
+		activeLevel: 3,
+		frameLengthMs: 1000,
+		moveSpeed: 20,
+	},
 };
