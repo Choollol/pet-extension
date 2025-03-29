@@ -10,6 +10,7 @@ import { reactionsData } from "@/assets/data/reactions-data";
 
 const TEST_PET_NAME = "testPet";
 
+
 const Pet = () => {
   // Used to rerender component
   const [_dummyState, setDummyState] = useState(0);
@@ -35,7 +36,7 @@ const Pet = () => {
 
   const timeUntilMotionStateChangeMsRef = useRef(1000);
 
-  const moveDirectionRef = useRef(1);
+  const moveDirectionRef = useRef(DIRECTION_RIGHT);
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
@@ -112,6 +113,27 @@ const Pet = () => {
     // console.log("Data loaded");
   };
 
+  const isCollidingLeft = (checkEqual = false) => {
+    if (
+      positionRef.current.x < 0 ||
+      (checkEqual && positionRef.current.x === 0)
+    ) {
+      return 0;
+    }
+    return NOT_COLLIDING_FLAG;
+  };
+
+  const isCollidingRight = (checkEqual = false) => {
+    const rightBound = window.innerWidth - petContainerRef.current!.clientWidth;
+    if (
+      positionRef.current.x > rightBound ||
+      (checkEqual && positionRef.current.x === rightBound)
+    ) {
+      return rightBound;
+    }
+    return NOT_COLLIDING_FLAG;
+  };
+
   const setMotionState = (newMotionState: PetMotionState) => {
     motionStateRef.current = newMotionState;
     triggerRerender();
@@ -133,7 +155,13 @@ const Pet = () => {
         : PetMotionState.IDLE
     );
 
-    moveDirectionRef.current = Math.random() < 0.5 ? 1 : -1;
+    if (isCollidingLeft(true) !== NOT_COLLIDING_FLAG) {
+      moveDirectionRef.current = DIRECTION_RIGHT;
+    } else if (isCollidingRight(true) !== NOT_COLLIDING_FLAG) {
+      moveDirectionRef.current = DIRECTION_LEFT;
+    } else {
+      moveDirectionRef.current = Math.random() < 0.5 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+    }
   };
 
   const nextSprite = () => {
@@ -152,7 +180,24 @@ const Pet = () => {
     if (!petContainerRef.current) {
       return;
     }
-    setPosition((position) => {
+    const leftBound = isCollidingLeft();
+    if (leftBound !== NOT_COLLIDING_FLAG) {
+      positionRef.current = {
+        ...positionRef.current,
+        x: 0,
+      };
+      triggerRerender();
+    } else {
+      const rightBound = isCollidingRight();
+      if (rightBound !== NOT_COLLIDING_FLAG) {
+        positionRef.current = {
+          ...positionRef.current,
+          x: rightBound,
+        };
+        triggerRerender();
+      }
+    }
+    /* setPosition((position) => {
       const rightBound =
         window.innerWidth - petContainerRef.current!.clientWidth;
       if (position.x < 0) {
@@ -171,7 +216,7 @@ const Pet = () => {
       }
       positionRef.current = position;
       return position;
-    });
+    }); */
   };
 
   const update = (time: number) => {
@@ -191,7 +236,16 @@ const Pet = () => {
       }
 
       if (motionStateRef.current === PetMotionState.MOVE) {
-        setPosition((position) => {
+        positionRef.current = {
+          ...positionRef.current,
+          x:
+            positionRef.current.x +
+            petData[currentPetName].moveSpeed *
+              moveDirectionRef.current *
+              deltaTimeSecs,
+        };
+        triggerRerender();
+        /* setPosition((position) => {
           const newPosition = {
             ...position,
             x:
@@ -201,10 +255,12 @@ const Pet = () => {
                 deltaTimeSecs,
           };
           return newPosition;
-        });
+        }); */
       }
 
       boundPosition();
+
+      // saveData();
 
       timeUntilMotionStateChangeMsRef.current -= deltaTimeMs;
       frameElapsedTimeRef.current += deltaTimeMs;
@@ -235,12 +291,15 @@ const Pet = () => {
       }
     });
     loadData();
+
     window.requestAnimationFrame(update);
   }, []);
 
   const positionStyle: React.CSSProperties = {
-    left: position.x,
-    bottom: position.y,
+    /* left: position.x,
+    bottom: position.y, */
+    left: positionRef.current.x,
+    bottom: positionRef.current.y,
   };
 
   const petContainerClasses = `${styles["pet-container"]} ${

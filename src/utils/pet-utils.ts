@@ -6,6 +6,11 @@ export enum PetMotionState {
   MOVE,
 }
 
+export const DIRECTION_LEFT = -1;
+export const DIRECTION_RIGHT = 1;
+
+export const NOT_COLLIDING_FLAG = -1;
+
 const idleStateDurationRangesSecs = [
   [0, 0],
   [60, 90],

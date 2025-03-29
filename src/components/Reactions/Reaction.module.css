@@ -4,5 +4,7 @@
   width: 2em;
   height: auto;
 
-  top: -50%;
+  top: -20px;
+
+  image-rendering: pixelated;
 }

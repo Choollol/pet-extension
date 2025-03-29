@@ -2,31 +2,34 @@ import { MessageType } from "@/utils/message-utils";
 import { CURRENT_PET_NAME_KEY } from "@/utils/storage-keys";
 
 export default defineBackground(() => {
-  let previousActiveTabId: number;
-  browser.tabs.query({ active: true }).then(([tab]) => {
-    previousActiveTabId = tab.id!;
-  });
+  let activeTabId: number;
 
-  const updatePetPosition = async () => {
+  const savePetData = () => {
+    browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
+  }
+  
+  const updatePetData = async () => {
     const [tab] = await browser.tabs.query({ active: true });
-    browser.tabs.sendMessage(previousActiveTabId, { type: MessageType.STORE_PET_DATA });
+    browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
     browser.tabs.sendMessage(tab.id!, { type: MessageType.LOAD_PET_DATA });
-    previousActiveTabId = tab.id!;
+    activeTabId = tab.id!;
   }
 
+  browser.tabs.query({ active: true }).then(([tab]) => {
+    activeTabId = tab.id!;
+  });
+
   browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    updatePetPosition();
+    updatePetData();
   });
 
   browser.tabs.onActivated.addListener(() => {
-    updatePetPosition();
+    updatePetData();
   });
 
   browser.tabs.onCreated.addListener((tab) => {
-    updatePetPosition();
+    updatePetData();
   });
-
-  storage.setItem(CURRENT_PET_NAME_KEY, "Test Pet");
 
   console.log('Hello background!', { id: browser.runtime.id });
 });
