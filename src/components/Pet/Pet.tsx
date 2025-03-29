@@ -10,7 +10,6 @@ import { reactionsData } from "@/assets/data/reactions-data";
 
 const TEST_PET_NAME = "testPet";
 
-
 const Pet = () => {
   // Used to rerender component
   const [_dummyState, setDummyState] = useState(0);
@@ -24,7 +23,7 @@ const Pet = () => {
     petData[currentPetNameRef.current]
   );
 
-  const positionRef = useRef({x: 0, y: 0});
+  const positionRef = useRef({ x: 0, y: 0 });
 
   const frameNumberRef = useRef(0);
 
@@ -44,6 +43,7 @@ const Pet = () => {
   };
 
   const saveData = () => {
+    storage.setItem(CURRENT_PET_NAME_KEY, currentPetNameRef.current);
     storage.setItem(PET_POSITION_KEY, positionRef.current);
     storage.setItem(PET_MOTION_STATE_KEY, motionStateRef.current);
     storage.setItem(
@@ -58,6 +58,7 @@ const Pet = () => {
   const loadData = async () => {
     setIsDataLoaded(false);
     const [
+      storedPetName,
       storedPosition,
       storedMotionState,
       storedTimeUntilMotionStateChange,
@@ -65,6 +66,7 @@ const Pet = () => {
       storedFrameNumber,
       storedFrameElapsedTime,
     ] = await Promise.all([
+      storage.getItem<string>(CURRENT_PET_NAME_KEY),
       storage.getItem<Position>(PET_POSITION_KEY),
       storage.getItem<PetMotionState>(PET_MOTION_STATE_KEY),
       storage.getItem<number>(PET_TIME_UNTIL_MOTION_STATE_CHANGE_KEY),
@@ -80,24 +82,28 @@ const Pet = () => {
     positionRef.current = storedPosition;
     // console.log("Loaded position: " + positionRef.current);
 
-    if (storedMotionState != undefined) {
+    if (storedPetName !== null) {
+      currentPetNameRef.current = storedPetName;
+    }
+
+    if (storedMotionState !== null) {
       motionStateRef.current = storedMotionState;
       // console.log("Loaded motion state: " + motionStateRef.current);
     }
-    if (storedTimeUntilMotionStateChange != undefined) {
+    if (storedTimeUntilMotionStateChange !== null) {
       timeUntilMotionStateChangeMsRef.current =
         storedTimeUntilMotionStateChange;
       // console.log("Loaded time until motion state change: " + timeUntilMotionStateChangeMsRef.current);
     }
-    if (storedMoveDirection != undefined) {
+    if (storedMoveDirection !== null) {
       moveDirectionRef.current = storedMoveDirection;
       // console.log("Loaded stored move direction: " + moveDirectionRef.current);
     }
-    if (storedFrameNumber != undefined) {
+    if (storedFrameNumber !== null) {
       frameNumberRef.current = storedFrameNumber;
       // console.log("Loaded frame number: " + frameNumberRef.current);
     }
-    if (storedFrameElapsedTime != undefined) {
+    if (storedFrameElapsedTime !== null) {
       frameElapsedTimeRef.current = storedFrameElapsedTime;
       // console.log("Loaded frame elapsed time: " + frameElapsedTimeRef.current);
     }
@@ -155,7 +161,8 @@ const Pet = () => {
     } else if (isCollidingRight(true) !== NOT_COLLIDING_FLAG) {
       moveDirectionRef.current = DIRECTION_LEFT;
     } else {
-      moveDirectionRef.current = Math.random() < 0.5 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+      moveDirectionRef.current =
+        Math.random() < 0.5 ? DIRECTION_RIGHT : DIRECTION_LEFT;
     }
   };
 
