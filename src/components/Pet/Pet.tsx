@@ -18,16 +18,15 @@ const Pet = () => {
   const petContainerRef = useRef<HTMLDivElement>(null);
   const petImageRef = useRef<HTMLImageElement>(null);
 
-  const [currentPetName, setCurrentPetName] = useState("slime");
-  const currentPetRef = useRef<SinglePetData>(petData[currentPetName]);
+  const currentPetNameRef = useRef("slime");
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  // Use ref also so that saveData() can see updated position. It's called from useEffect() so it can't see updated states.
-  const positionRef = useRef(position);
+  const currentPetRef = useRef<SinglePetData>(
+    petData[currentPetNameRef.current]
+  );
 
-  const [frameNumber, setFrameNumber] = useState(0);
-  // Use ref also so that saveData() can see updated frame number. It's called from useEffect() so it can't see updated states.
-  const frameNumberRef = useRef(frameNumber);
+  const positionRef = useRef({x: 0, y: 0});
+
+  const frameNumberRef = useRef(0);
 
   const frameElapsedTimeRef = useRef(0);
   const previousTimeRef = useRef(0);
@@ -78,10 +77,6 @@ const Pet = () => {
       return;
     }
 
-    setPosition({
-      x: storedPosition.x,
-      y: storedPosition.y,
-    });
     positionRef.current = storedPosition;
     // console.log("Loaded position: " + positionRef.current);
 
@@ -99,7 +94,6 @@ const Pet = () => {
       // console.log("Loaded stored move direction: " + moveDirectionRef.current);
     }
     if (storedFrameNumber != undefined) {
-      setFrameNumber(storedFrameNumber);
       frameNumberRef.current = storedFrameNumber;
       // console.log("Loaded frame number: " + frameNumberRef.current);
     }
@@ -144,8 +138,9 @@ const Pet = () => {
     );
 
     frameElapsedTimeRef.current = 0;
-    setFrameNumber((_frameNumber) => 0);
     frameNumberRef.current = 0;
+
+    triggerRerender();
   };
 
   const changeMotionState = () => {
@@ -165,15 +160,13 @@ const Pet = () => {
   };
 
   const nextSprite = () => {
-    setFrameNumber((frameNumber) => {
-      const newFrameNumber =
-        frameNumber + 1 >=
-        getPetSpriteList(currentPetName, motionStateRef.current).length
-          ? 0
-          : frameNumber + 1;
-      frameNumberRef.current = newFrameNumber;
-      return newFrameNumber;
-    });
+    const newFrameNumber =
+      frameNumberRef.current + 1 >=
+      getPetSpriteList(currentPetNameRef.current, motionStateRef.current).length
+        ? 0
+        : frameNumberRef.current + 1;
+    frameNumberRef.current = newFrameNumber;
+    triggerRerender();
   };
 
   const boundPosition = () => {
@@ -229,7 +222,8 @@ const Pet = () => {
       }
 
       if (
-        frameElapsedTimeRef.current >= petData[currentPetName].frameLengthMs
+        frameElapsedTimeRef.current >=
+        petData[currentPetNameRef.current].frameLengthMs
       ) {
         nextSprite();
         frameElapsedTimeRef.current = 0;
@@ -240,22 +234,11 @@ const Pet = () => {
           ...positionRef.current,
           x:
             positionRef.current.x +
-            petData[currentPetName].moveSpeed *
+            petData[currentPetNameRef.current].moveSpeed *
               moveDirectionRef.current *
               deltaTimeSecs,
         };
         triggerRerender();
-        /* setPosition((position) => {
-          const newPosition = {
-            ...position,
-            x:
-              position.x +
-              petData[currentPetName].moveSpeed *
-                moveDirectionRef.current *
-                deltaTimeSecs,
-          };
-          return newPosition;
-        }); */
       }
 
       boundPosition();
@@ -321,9 +304,9 @@ const Pet = () => {
           ref={petImageRef}
           className={petImageClasses}
           src={getPetSprite(
-            currentPetName,
+            currentPetNameRef.current,
             motionStateRef.current,
-            frameNumber
+            frameNumberRef.current
           )}
         />
       )}
