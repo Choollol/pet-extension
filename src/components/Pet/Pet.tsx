@@ -37,6 +37,7 @@ const Pet = () => {
   const moveDirectionRef = useRef(DIRECTION_RIGHT);
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const isDataLoadingRef = useRef(false);
 
   const triggerRerender = () => {
     setDummyState((dummyState) => dummyState ^ 1);
@@ -56,7 +57,12 @@ const Pet = () => {
   };
 
   const loadData = async () => {
+    if (isDataLoadingRef.current) {
+      return;
+    }
+    console.log("Loading data");
     setIsDataLoaded(false);
+    isDataLoadingRef.current = true;
     const [
       storedPetName,
       storedPosition,
@@ -80,7 +86,9 @@ const Pet = () => {
     }
 
     positionRef.current = storedPosition;
-    // console.log("Loaded position: " + positionRef.current);
+    console.log(
+      `Loaded position: ${positionRef.current.x} ${positionRef.current.y}`
+    );
 
     if (storedPetName !== null) {
       currentPetNameRef.current = storedPetName;
@@ -109,6 +117,7 @@ const Pet = () => {
     }
 
     setIsDataLoaded(true);
+    isDataLoadingRef.current = false;
 
     // console.log("Data loaded");
   };
@@ -197,26 +206,6 @@ const Pet = () => {
         triggerRerender();
       }
     }
-    /* setPosition((position) => {
-      const rightBound =
-        window.innerWidth - petContainerRef.current!.clientWidth;
-      if (position.x < 0) {
-        setMotionState(PetMotionState.IDLE);
-        return {
-          x: 0,
-          y: position.y,
-        };
-      }
-      if (position.x > rightBound) {
-        setMotionState(PetMotionState.IDLE);
-        return {
-          x: rightBound,
-          y: position.y,
-        };
-      }
-      positionRef.current = position;
-      return position;
-    }); */
   };
 
   const update = (time: number) => {
@@ -250,7 +239,7 @@ const Pet = () => {
 
       boundPosition();
 
-      // saveData();
+      saveData();
 
       timeUntilMotionStateChangeMsRef.current -= deltaTimeMs;
       frameElapsedTimeRef.current += deltaTimeMs;
@@ -273,28 +262,29 @@ const Pet = () => {
   };
 
   useEffect(() => {
+    console.log("Initial setup");
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === MessageType.LOAD_PET_DATA) {
+        console.log("Received message to load data");
         loadData();
       } else if (message.type === MessageType.STORE_PET_DATA) {
         saveData();
       }
     });
-    loadData();
-
-    window.requestAnimationFrame(update);
+    loadData().then(() => {
+      window.requestAnimationFrame(update);
+    });
   }, []);
 
   const positionStyle: React.CSSProperties = {
-    /* left: position.x,
-    bottom: position.y, */
     left: positionRef.current.x,
     bottom: positionRef.current.y,
   };
 
-  const petContainerClasses = `${styles["pet-container"]} ${
-    moveDirectionRef.current === -1 && styles["flip-horizontal"]
-  }`;
+  let petContainerClasses = `${styles["pet-container"]}`;
+  if (moveDirectionRef.current === DIRECTION_LEFT) {
+    petContainerClasses += ` ${styles["flip-horizontal"]}`;
+  }
 
   const petImageClasses = `${styles["pet-image"]}`;
 

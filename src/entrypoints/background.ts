@@ -7,7 +7,7 @@ export default defineBackground(() => {
   const savePetData = () => {
     browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
   }
-  
+
   const updatePetData = async () => {
     const [tab] = await browser.tabs.query({ active: true });
     browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
