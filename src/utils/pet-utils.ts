@@ -25,7 +25,8 @@ const moveStateDurationRangesSecs = [
   [2, 4],
   [3, 5],
   [4, 7],
-  [6, 9],
+  [6, 8],
+  [7, 9],
 ]
 
 export function getPetSprite(

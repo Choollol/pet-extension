@@ -60,7 +60,7 @@ const Pet = () => {
     if (isDataLoadingRef.current) {
       return;
     }
-    console.log("Loading data");
+    // console.log("Loading data");
     setIsDataLoaded(false);
     isDataLoadingRef.current = true;
     const [
@@ -86,9 +86,9 @@ const Pet = () => {
     }
 
     positionRef.current = storedPosition;
-    console.log(
-      `Loaded position: ${positionRef.current.x} ${positionRef.current.y}`
-    );
+    // console.log(
+    //   `Loaded position: ${positionRef.current.x} ${positionRef.current.y}`
+    // );
 
     if (storedPetName !== null) {
       currentPetNameRef.current = storedPetName;
@@ -145,7 +145,6 @@ const Pet = () => {
 
   const setMotionState = (newMotionState: PetMotionState) => {
     motionStateRef.current = newMotionState;
-    triggerRerender();
 
     timeUntilMotionStateChangeMsRef.current = getMotionStateDuration(
       currentPetRef.current.activeLevel,
@@ -189,12 +188,14 @@ const Pet = () => {
     if (!petContainerRef.current) {
       return;
     }
+    let isColliding = false;
     const leftBound = isCollidingLeft();
     if (leftBound !== NOT_COLLIDING_FLAG) {
       positionRef.current = {
         ...positionRef.current,
         x: 0,
       };
+      isColliding = true;
       triggerRerender();
     } else {
       const rightBound = isCollidingRight();
@@ -203,8 +204,13 @@ const Pet = () => {
           ...positionRef.current,
           x: rightBound,
         };
+        isColliding = true;
         triggerRerender();
       }
+    }
+
+    if (isColliding && motionStateRef.current === PetMotionState.MOVE) {
+      setMotionState(PetMotionState.IDLE);
     }
   };
 
