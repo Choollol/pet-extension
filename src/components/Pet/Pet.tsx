@@ -17,6 +17,7 @@ const Pet = () => {
   const petContainerRef = useRef<HTMLDivElement>(null);
   const petImageRef = useRef<HTMLImageElement>(null);
 
+  // Internal name
   const currentPetNameRef = useRef("slime");
 
   const currentPetRef = useRef<SinglePetData>(
@@ -120,6 +121,11 @@ const Pet = () => {
     isDataLoadingRef.current = false;
 
     // console.log("Data loaded");
+  };
+
+  const changePet = (newPetName: string) => {
+    currentPetNameRef.current = newPetName;
+    triggerRerender();
   };
 
   const isCollidingLeft = (checkEqual = false) => {
@@ -267,7 +273,7 @@ const Pet = () => {
     event.preventDefault();
   };
 
-  useEffect(() => {
+  const init = () => {
     console.log("Initial setup");
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === MessageType.LOAD_PET_DATA) {
@@ -275,11 +281,17 @@ const Pet = () => {
         loadData();
       } else if (message.type === MessageType.STORE_PET_DATA) {
         saveData();
+      } else if (message.type === MessageType.CHANGE_PET) {
+        changePet(message.internalPetName);
       }
     });
     loadData().then(() => {
       window.requestAnimationFrame(update);
     });
+  };
+
+  useEffect(() => {
+    init();
   }, []);
 
   const positionStyle: React.CSSProperties = {

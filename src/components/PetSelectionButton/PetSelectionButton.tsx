@@ -4,7 +4,12 @@ interface Props {
 }
 
 const PetSelectionButton = ({ internalPetName, externalPetName }: Props) => {
-  const handleClick = () => {
+  const handleClick = async () => {
+    const [tab] = await browser.tabs.query({ active: true });
+    browser.tabs.sendMessage(tab.id!, {
+      type: MessageType.CHANGE_PET,
+      internalPetName: internalPetName,
+    });
   };
 
   return <button onClick={handleClick}>{externalPetName}</button>;
