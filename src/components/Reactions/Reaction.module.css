@@ -1,10 +1,10 @@
 .reaction-image {
   position: absolute;
 
-  width: 2em;
+  width: 2.5em;
   height: auto;
 
-  top: -20px;
+  top: -30px;
 
   image-rendering: pixelated;
 }

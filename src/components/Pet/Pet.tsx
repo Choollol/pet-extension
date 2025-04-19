@@ -264,6 +264,7 @@ const Pet = () => {
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     // Left click
     if (event.type === "click") {
+      triggerEvent(reactionsData.heartReaction.eventName);
     }
     // Right click
     else if (event.type === "contextmenu") {
