@@ -1,0 +1,27 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.popup-title {
+  text-align: center;
+
+  font-size: 30px;
+
+  margin-top: 40px;
+}
+
+.pet-selection-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex: 1;
+
+  justify-content: center;
+
+  margin: 40px;
+
+  max-width: 400px;
+}

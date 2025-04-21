@@ -17,10 +17,13 @@ struct PetData {
     std::string externalName;
     unsigned idleSpriteCount;
     unsigned moveSpriteCount;
+    std::string thumbnailSprite;
     unsigned activeLevel = 2;  // Range: 0-5
     unsigned moveSpeed = 20;
     unsigned frameLengthMs = 1000;
 };
+
+char thumbnailSeparator = ' ';
 
 void generatePetData(const std::string& outputDir, const std::string& fileName, const std::string& fileExtension, const std::vector<PetData>& petData);
 
@@ -28,8 +31,8 @@ int main() {
     std::string outputDir = "../assets/data";
 
     std::vector<PetData> petData = {
-        {"testPet", "Test Pet", 2, 2, 5},
-        {"slime", "Slime", 2, 2, 3},
+        {"testPet", "Test Pet", 2, 2, "idle 1", 5},
+        {"slime", "Slime", 2, 2, "idle 2", 3},
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
@@ -42,6 +45,11 @@ void generateObjectProperty(std::ofstream& writer, unsigned indentationAmount, s
  * @param spriteType Should be in lowercase. Example: "idle"
  */
 void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::string& spriteType);
+
+/**
+ * Generates a single sprite path
+ */
+std::string getSpritePath(const PetData& pet, const std::string& spriteType, int frameNumber);
 
 void generateSpriteDataTypes(std::ofstream& writer);
 
@@ -67,6 +75,10 @@ void generatePetData(const std::string& outputDir, const std::string& fileName, 
 
         // Move sprite paths
         generateSpritePaths(writer, pet, "move");
+
+        std::string thumbnailSpriteType = pet.thumbnailSprite.substr(0, pet.thumbnailSprite.find(' '));
+        int thumbnailSpriteFrameNumber = std::stoi(pet.thumbnailSprite.substr(pet.thumbnailSprite.find(' ') + 1));
+        generateObjectProperty(writer, 2, "thumbnailSprite", getSpritePath(pet, thumbnailSpriteType, thumbnailSpriteFrameNumber));
 
         generateObjectProperty(writer, 2, "activeLevel", pet.activeLevel);
 
@@ -98,19 +110,27 @@ void generateObjectProperty(std::ofstream& writer, unsigned indentationAmount, s
 }
 
 void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::string& spriteType) {
-    writer << "\t\t" << spriteType << "_sprites: [\n";
+    writer << "\t\t" << spriteType << "Sprites: [\n";
     for (unsigned i = 1; i <= pet.idleSpriteCount; ++i) {
-        writer << "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" << toSnakeCase(pet.internalName) << "/" << spriteType << "/" << toSnakeCase(pet.internalName, true) << "_" << toSnakeCase(spriteType, true) << "_" << i << ".png\"),\n";
+        /* writer << "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" << toSnakeCase(pet.internalName) << "/" << spriteType << "/" << toSnakeCase(pet.internalName, true) << "_" << toSnakeCase(spriteType, true) << "_" << i << ".png\"),\n"; */
+        // generateSpritePath(writer, pet, spriteType, i);
+        writer << getSpritePath(pet, spriteType, i) << ",\n";
     }
     writer << "\t\t],\n";
+}
+
+std::string getSpritePath(const PetData& pet, const std::string& spriteType, int frameNumber) {
+    /* writer << "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" << toSnakeCase(pet.internalName) << "/" << spriteType << "/" << toSnakeCase(pet.internalName, true) << "_" << toSnakeCase(spriteType, true) << "_" << frameNumber << ".png\"),\n"; */
+    return std::string() + "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" + toSnakeCase(pet.internalName) + "/" + spriteType + "/" + toSnakeCase(pet.internalName, true) + "_" + toSnakeCase(spriteType, true) + "_" + std::to_string(frameNumber) + ".png\")";
 }
 
 void generateSpriteDataTypes(std::ofstream& writer) {
     writer << "export type SinglePetData = {\n";
 
     generateObjectProperty(writer, 1, "name", "string");
-    generateObjectProperty(writer, 1, "idle_sprites", "string[]");
-    generateObjectProperty(writer, 1, "move_sprites", "string[]");
+    generateObjectProperty(writer, 1, "idleSprites", "string[]");
+    generateObjectProperty(writer, 1, "moveSprites", "string[]");
+    generateObjectProperty(writer, 1, "thumbnailSprite", "string");
     generateObjectProperty(writer, 1, "activeLevel", "number");
     generateObjectProperty(writer, 1, "frameLengthMs", "number");
     generateObjectProperty(writer, 1, "moveSpeed", "number");

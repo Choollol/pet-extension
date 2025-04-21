@@ -1,0 +1,13 @@
+.pet-selection-button {
+  width: 100px;
+
+  margin: 8px;
+
+  background-color: hsl(0, 0%, 19%);
+}
+
+.pet-thumbnail-image {
+  width: 50px;
+
+  image-rendering: pixelated;
+}

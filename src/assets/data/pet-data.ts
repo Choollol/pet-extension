@@ -2,8 +2,9 @@
 
 export type SinglePetData = {
 	name: string,
-	idle_sprites: string[],
-	move_sprites: string[],
+	idleSprites: string[],
+	moveSprites: string[],
+	thumbnailSprite: string,
 	activeLevel: number,
 	frameLengthMs: number,
 	moveSpeed: number,
@@ -12,30 +13,31 @@ export type SinglePetData = {
 export const petData: { [petName: string]: SinglePetData } = {
 	testPet: {
 		name: "Test Pet",
-		idle_sprites: [
+		idleSprites: [
 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/idle/Test_Pet_Idle_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/idle/Test_Pet_Idle_2.png"),
 		],
-		move_sprites: [
+		moveSprites: [
 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/move/Test_Pet_Move_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/move/Test_Pet_Move_2.png"),
 		],
+		thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/idle/Test_Pet_Idle_1.png"),
 		activeLevel: 5,
 		frameLengthMs: 1000,
 		moveSpeed: 20,
 	},
 	slime: {
 		name: "Slime",
-		idle_sprites: [
+		idleSprites: [
 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_2.png"),
 		],
-		move_sprites: [
+		moveSprites: [
 			browser.runtime.getURL("/sprites/pet_sprites/slime/move/Slime_Move_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/slime/move/Slime_Move_2.png"),
 		],
-		// activeLevel: 3,
-		activeLevel: 5,
+		thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_2.png"),
+		activeLevel: 3,
 		frameLengthMs: 1000,
 		moveSpeed: 20,
 	},
