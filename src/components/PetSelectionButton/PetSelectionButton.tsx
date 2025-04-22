@@ -21,7 +21,7 @@ const PetSelectionButton = ({
 
   return (
     <button onClick={handleClick} className={styles["pet-selection-button"]}>
-      <p>{externalPetName}</p>
+      <h4 className={styles["pet-name-text"]}>{externalPetName}</h4>
       <img src={petThumbnailSprite} className={styles["pet-thumbnail-image"]} />
     </button>
   );

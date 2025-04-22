@@ -1,13 +1,22 @@
 .pet-selection-button {
-  width: 100px;
+  width: 140px;
+  height: 160px;
 
   margin: 8px;
 
   background-color: hsl(0, 0%, 19%);
+
+  align-items: center;
+}
+
+.pet-name-text {
+  margin-bottom: 6px;
+  
+  font-weight: 600;
 }
 
 .pet-thumbnail-image {
-  width: 50px;
+  width: 80px;
 
   image-rendering: pixelated;
 }
