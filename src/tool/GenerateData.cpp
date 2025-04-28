@@ -32,7 +32,7 @@ int main() {
 
     std::vector<PetData> petData = {
         {"testPet", "Test Pet", 2, 2, "idle 1", 5},
-        {"slime", "Slime", 2, 2, "idle 2", 3},
+        {"slime", "The Witch's Slime", 2, 2, "idle 2", 3},
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);

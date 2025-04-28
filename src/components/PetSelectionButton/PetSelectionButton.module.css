@@ -11,6 +11,7 @@
 
 .pet-name-text {
   margin-bottom: 6px;
+  margin-top: 4px;
   
   font-weight: 600;
 }
@@ -19,4 +20,8 @@
   width: 80px;
 
   image-rendering: pixelated;
+}
+
+.selected-pet-indication {
+  border-color: hsl(205, 61%, 63%);
 }

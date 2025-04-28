@@ -11,6 +11,8 @@ export const DIRECTION_RIGHT = 1;
 
 export const NOT_COLLIDING_FLAG = -1;
 
+export const DEFAULT_PET_NAME = "slime";
+
 const idleStateDurationRangesSecs = [
   [0, 0],
   [60, 90],
@@ -44,7 +46,7 @@ export function getPetSpriteList(
   return petData[petInternalName][
     `${PetMotionState[
       motionState
-    ].toLowerCase()}_sprites` as keyof SinglePetData
+    ].toLowerCase()}Sprites` as keyof SinglePetData
   ] as string[];
 }
 

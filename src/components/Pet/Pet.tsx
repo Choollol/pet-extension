@@ -8,8 +8,6 @@ import { triggerEvent } from "@/utils/event";
 import HeartReaction from "@/components/Reactions/HeartReaction";
 import { reactionsData } from "@/assets/data/reactions-data";
 
-const TEST_PET_NAME = "testPet";
-
 const Pet = () => {
   // Used to rerender component
   const [_dummyState, setDummyState] = useState(0);
@@ -18,7 +16,7 @@ const Pet = () => {
   const petImageRef = useRef<HTMLImageElement>(null);
 
   // Internal name
-  const currentPetNameRef = useRef("slime");
+  const currentPetNameRef = useRef(DEFAULT_PET_NAME);
 
   const currentPetRef = useRef<SinglePetData>(
     petData[currentPetNameRef.current]
@@ -278,7 +276,6 @@ const Pet = () => {
     console.log("Initial setup");
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === MessageType.LOAD_PET_DATA) {
-        console.log("Received message to load data");
         loadData();
       } else if (message.type === MessageType.STORE_PET_DATA) {
         saveData();

@@ -27,7 +27,7 @@ export const petData: { [petName: string]: SinglePetData } = {
 		moveSpeed: 20,
 	},
 	slime: {
-		name: "Slime",
+		name: "The Witch's Slime",
 		idleSprites: [
 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_2.png"),
