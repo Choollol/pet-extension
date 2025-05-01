@@ -270,6 +270,8 @@ const Pet = () => {
     }
 
     event.preventDefault();
+
+    triggerRerender();
   };
 
   const init = () => {

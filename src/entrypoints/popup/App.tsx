@@ -5,6 +5,15 @@ import PetSelectionButton from "@/components/PetSelectionButton/PetSelectionButt
 function App() {
   const [currentSelectedPetName, setCurrentSelectedPetName] = useState(DEFAULT_PET_NAME);
 
+  const init = async () => {
+    const petName = await storage.getItem<string>(CURRENT_PET_NAME_KEY);
+    setCurrentSelectedPetName(petName ?? currentSelectedPetName);
+  }
+
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <>
       <h1 className={styles["popup-title"]}>Welcome to<br />Muna's Menagerie!</h1>
