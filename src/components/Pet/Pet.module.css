@@ -1,6 +1,6 @@
 .pet-container {
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   align-items: center;
 
   position: fixed;
@@ -9,15 +9,18 @@
 
   z-index: 10000;
 
-  width: 5em;
-  height: 5em;
+  padding: 0px;
 }
 
 .pet-image {
-  width: 100%;
-  height: auto;
+  zoom: var(--image-zoom-scale);
 
   image-rendering: pixelated;
+
+  bottom: 0px;
+
+  margin: 0px;
+  padding: 0px;
 }
 
 .flip-horizontal {

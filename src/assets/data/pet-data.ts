@@ -6,7 +6,8 @@ export type SinglePetData = {
 	moveSprites: string[],
 	thumbnailSprite: string,
 	activeLevel: number,
-	frameLengthMs: number,
+	idleFrameLengthMs: number,
+	moveFrameLengthMs: number,
 	moveSpeed: number,
 }
 
@@ -21,9 +22,10 @@ export const petData: { [petName: string]: SinglePetData } = {
 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/move/Test_Pet_Move_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/move/Test_Pet_Move_2.png"),
 		],
-		thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/idle/Test_Pet_Idle_1.png"),
+thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/test_pet/idle/Test_Pet_Idle_1.png"),
 		activeLevel: 5,
-		frameLengthMs: 1000,
+		idleFrameLengthMs: 1000,
+		moveFrameLengthMs: 1000,
 		moveSpeed: 20,
 	},
 	slime: {
@@ -36,9 +38,28 @@ export const petData: { [petName: string]: SinglePetData } = {
 			browser.runtime.getURL("/sprites/pet_sprites/slime/move/Slime_Move_1.png"),
 			browser.runtime.getURL("/sprites/pet_sprites/slime/move/Slime_Move_2.png"),
 		],
-		thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_2.png"),
+thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/slime/idle/Slime_Idle_2.png"),
 		activeLevel: 3,
-		frameLengthMs: 1000,
+		idleFrameLengthMs: 1000,
+		moveFrameLengthMs: 1000,
+		moveSpeed: 20,
+	},
+	snowFox: {
+		name: "Crystal Fox",
+		idleSprites: [
+			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/idle/Snow_Fox_Idle_1.png"),
+			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/idle/Snow_Fox_Idle_2.png"),
+		],
+		moveSprites: [
+			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/move/Snow_Fox_Move_1.png"),
+			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/move/Snow_Fox_Move_2.png"),
+			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/move/Snow_Fox_Move_3.png"),
+			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/move/Snow_Fox_Move_4.png"),
+		],
+thumbnailSprite: 			browser.runtime.getURL("/sprites/pet_sprites/snow_fox/idle/Snow_Fox_Idle_1.png"),
+		activeLevel: 2,
+		idleFrameLengthMs: 3000,
+		moveFrameLengthMs: 500,
 		moveSpeed: 20,
 	},
 };

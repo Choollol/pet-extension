@@ -12,15 +12,27 @@ ADDING NEW PET PROPERTY:
 4 - Update petData in main()
 */
 
+/*
+ADDING NEW PET:
+1 - Create a folder in pet_sprites and subfolders for types of movement, and add the sprite images
+2 - Add a new entry to the petData vector in main()
+3 - Re-generate pet data
+*/
+
+const unsigned DEFAULT_ACTIVE_LEVEL = 2;
+const unsigned DEFAULT_MOVE_SPEED = 20;
+const unsigned DEFAULT_FRAME_LENGTH_MS = 1000;
+
 struct PetData {
     std::string internalName;
     std::string externalName;
     unsigned idleSpriteCount;
     unsigned moveSpriteCount;
     std::string thumbnailSprite;
-    unsigned activeLevel = 2;  // Range: 0-5
-    unsigned moveSpeed = 20;
-    unsigned frameLengthMs = 1000;
+    unsigned activeLevel = DEFAULT_ACTIVE_LEVEL;  // Range: 0-5
+    unsigned idleFrameLengthMs = DEFAULT_FRAME_LENGTH_MS;
+    unsigned moveFrameLengthMs = DEFAULT_FRAME_LENGTH_MS;
+    unsigned moveSpeed = DEFAULT_MOVE_SPEED;
 };
 
 char thumbnailSeparator = ' ';
@@ -33,6 +45,16 @@ int main() {
     std::vector<PetData> petData = {
         {"testPet", "Test Pet", 2, 2, "idle 1", 5},
         {"slime", "The Witch's Slime", 2, 2, "idle 2", 3},
+        {
+            "snowFox",
+            "Crystal Fox",
+            2,
+            4,
+            "idle 1",
+            2,
+            3000,
+            500,
+        },
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
@@ -44,7 +66,7 @@ void generateObjectProperty(std::ofstream& writer, unsigned indentationAmount, s
 /**
  * @param spriteType Should be in lowercase. Example: "idle"
  */
-void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::string& spriteType);
+void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::string& spriteType, int spriteCount);
 
 /**
  * Generates a single sprite path
@@ -71,19 +93,20 @@ void generatePetData(const std::string& outputDir, const std::string& fileName, 
         generateObjectProperty(writer, 2, "name", pet.externalName, true);
 
         // Idle sprite paths
-        generateSpritePaths(writer, pet, "idle");
+        generateSpritePaths(writer, pet, "idle", pet.idleSpriteCount);
 
         // Move sprite paths
-        generateSpritePaths(writer, pet, "move");
+        generateSpritePaths(writer, pet, "move", pet.moveSpriteCount);
 
         std::string thumbnailSpriteType = pet.thumbnailSprite.substr(0, pet.thumbnailSprite.find(' '));
         int thumbnailSpriteFrameNumber = std::stoi(pet.thumbnailSprite.substr(pet.thumbnailSprite.find(' ') + 1));
-        generateObjectProperty(writer, 2, "thumbnailSprite", getSpritePath(pet, thumbnailSpriteType, thumbnailSpriteFrameNumber));
+        generateObjectProperty(writer, 0, "thumbnailSprite", getSpritePath(pet, thumbnailSpriteType, thumbnailSpriteFrameNumber));
 
         generateObjectProperty(writer, 2, "activeLevel", pet.activeLevel);
 
         // Length of each frame
-        generateObjectProperty(writer, 2, "frameLengthMs", pet.frameLengthMs);
+        generateObjectProperty(writer, 2, "idleFrameLengthMs", pet.idleFrameLengthMs);
+        generateObjectProperty(writer, 2, "moveFrameLengthMs", pet.moveFrameLengthMs);
 
         generateObjectProperty(writer, 2, "moveSpeed", pet.moveSpeed);
 
@@ -109,11 +132,9 @@ void generateObjectProperty(std::ofstream& writer, unsigned indentationAmount, s
     writer << ",\n";
 }
 
-void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::string& spriteType) {
+void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::string& spriteType, int spriteCount) {
     writer << "\t\t" << spriteType << "Sprites: [\n";
-    for (unsigned i = 1; i <= pet.idleSpriteCount; ++i) {
-        /* writer << "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" << toSnakeCase(pet.internalName) << "/" << spriteType << "/" << toSnakeCase(pet.internalName, true) << "_" << toSnakeCase(spriteType, true) << "_" << i << ".png\"),\n"; */
-        // generateSpritePath(writer, pet, spriteType, i);
+    for (unsigned i = 1; i <= spriteCount; ++i) {
         writer << getSpritePath(pet, spriteType, i) << ",\n";
     }
     writer << "\t\t],\n";
@@ -132,7 +153,8 @@ void generateSpriteDataTypes(std::ofstream& writer) {
     generateObjectProperty(writer, 1, "moveSprites", "string[]");
     generateObjectProperty(writer, 1, "thumbnailSprite", "string");
     generateObjectProperty(writer, 1, "activeLevel", "number");
-    generateObjectProperty(writer, 1, "frameLengthMs", "number");
+    generateObjectProperty(writer, 1, "idleFrameLengthMs", "number");
+    generateObjectProperty(writer, 1, "moveFrameLengthMs", "number");
     generateObjectProperty(writer, 1, "moveSpeed", "number");
 
     writer << "}\n\n";

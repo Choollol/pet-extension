@@ -13,6 +13,8 @@ export const NOT_COLLIDING_FLAG = -1;
 
 export const DEFAULT_PET_NAME = "slime";
 
+// Lower = lazier
+
 const idleStateDurationRangesSecs = [
   [0, 0],
   [60, 90],

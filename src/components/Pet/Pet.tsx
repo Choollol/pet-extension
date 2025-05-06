@@ -214,7 +214,10 @@ const Pet = () => {
     }
 
     if (isColliding && motionStateRef.current === PetMotionState.MOVE) {
-      setMotionState(PetMotionState.IDLE);
+      moveDirectionRef.current =
+        moveDirectionRef.current === DIRECTION_LEFT
+          ? DIRECTION_RIGHT
+          : DIRECTION_LEFT;
     }
   };
 
@@ -227,14 +230,8 @@ const Pet = () => {
         changeMotionState();
       }
 
-      if (
-        frameElapsedTimeRef.current >=
-        petData[currentPetNameRef.current].frameLengthMs
-      ) {
-        nextSprite();
-        frameElapsedTimeRef.current = 0;
-      }
-
+      let currentFrameLengthMs =
+        petData[currentPetNameRef.current].idleFrameLengthMs;
       if (motionStateRef.current === PetMotionState.MOVE) {
         positionRef.current = {
           ...positionRef.current,
@@ -244,7 +241,14 @@ const Pet = () => {
               moveDirectionRef.current *
               deltaTimeSecs,
         };
+        currentFrameLengthMs =
+          petData[currentPetNameRef.current].moveFrameLengthMs;
         triggerRerender();
+      }
+
+      if (frameElapsedTimeRef.current >= currentFrameLengthMs) {
+        nextSprite();
+        frameElapsedTimeRef.current = 0;
       }
 
       boundPosition();

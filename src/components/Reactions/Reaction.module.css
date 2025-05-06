@@ -1,10 +1,12 @@
 .reaction-image {
   position: absolute;
 
-  width: 2.5em;
-  height: auto;
+  zoom: var(--image-zoom-scale);
 
-  top: -30px;
+  top: -16px;
 
   image-rendering: pixelated;
+
+  margin: 0px;
+  padding: 0px;
 }
