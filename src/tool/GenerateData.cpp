@@ -55,7 +55,8 @@ int main() {
             3000,
             500,
         },
-        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, 500, 500},
+        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, 500, 500, 15},
+        {"gemini", "Gem and Nai", 6, 8, "idle 3", 1, 200, 200, 40}
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
