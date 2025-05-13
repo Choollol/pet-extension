@@ -19,8 +19,8 @@ const idleStateDurationRangesSecs = [
   [0, 0],
   [60, 90],
   [30, 50],
-  [30, 50],
   [10, 30],
+  [6, 12],
   [3, 6],
 ]
 

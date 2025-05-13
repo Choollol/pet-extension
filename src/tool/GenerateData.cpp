@@ -55,6 +55,7 @@ int main() {
             3000,
             500,
         },
+        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, 500, 500},
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
@@ -100,7 +101,7 @@ void generatePetData(const std::string& outputDir, const std::string& fileName, 
 
         std::string thumbnailSpriteType = pet.thumbnailSprite.substr(0, pet.thumbnailSprite.find(' '));
         int thumbnailSpriteFrameNumber = std::stoi(pet.thumbnailSprite.substr(pet.thumbnailSprite.find(' ') + 1));
-        generateObjectProperty(writer, 0, "thumbnailSprite", getSpritePath(pet, thumbnailSpriteType, thumbnailSpriteFrameNumber));
+        generateObjectProperty(writer, 2, "thumbnailSprite", getSpritePath(pet, thumbnailSpriteType, thumbnailSpriteFrameNumber));
 
         generateObjectProperty(writer, 2, "activeLevel", pet.activeLevel);
 
@@ -141,7 +142,6 @@ void generateSpritePaths(std::ofstream& writer, const PetData& pet, const std::s
 }
 
 std::string getSpritePath(const PetData& pet, const std::string& spriteType, int frameNumber) {
-    /* writer << "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" << toSnakeCase(pet.internalName) << "/" << spriteType << "/" << toSnakeCase(pet.internalName, true) << "_" << toSnakeCase(spriteType, true) << "_" << frameNumber << ".png\"),\n"; */
     return std::string() + "\t\t\tbrowser.runtime.getURL(\"/sprites/pet_sprites/" + toSnakeCase(pet.internalName) + "/" + spriteType + "/" + toSnakeCase(pet.internalName, true) + "_" + toSnakeCase(spriteType, true) + "_" + std::to_string(frameNumber) + ".png\")";
 }
 
