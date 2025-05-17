@@ -29,7 +29,8 @@ struct PetData {
     unsigned idleSpriteCount;
     unsigned moveSpriteCount;
     std::string thumbnailSprite;
-    unsigned activeLevel = DEFAULT_ACTIVE_LEVEL;  // Range: 0-5
+    unsigned activeLevel;  // Range: 0-5
+    std::string origin;
     unsigned idleFrameLengthMs = DEFAULT_FRAME_LENGTH_MS;
     unsigned moveFrameLengthMs = DEFAULT_FRAME_LENGTH_MS;
     unsigned moveSpeed = DEFAULT_MOVE_SPEED;
@@ -43,8 +44,8 @@ int main() {
     std::string outputDir = "../assets/data";
 
     std::vector<PetData> petData = {
-        {"testPet", "Test Pet", 2, 2, "idle 1", 5},
-        {"slime", "The Witch's Slime", 2, 2, "idle 2", 3},
+        //{"testPet", "Test Pet", 2, 2, "idle 1", 5, "Hell"},
+        {"slime", "The Witch's Slime", 2, 2, "idle 2", 3, "Forest of Souls"},
         {
             "snowFox",
             "Crystal Fox",
@@ -52,11 +53,14 @@ int main() {
             4,
             "idle 1",
             2,
+            "Serem Wvaulstzi Plateau",
             3000,
             500,
         },
-        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, 500, 500, 15},
-        {"gemini", "Gem and Nai", 6, 8, "idle 3", 1, 200, 200, 40}
+        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, "The Islands of Insight", 500, 500, 15},
+        {"gemini", "Gem and Nai", 6, 8, "idle 3", 1, "Above the Clouds", 200, 200, 40},
+        {"windBird", "Evenglen Tumble", 4, 4, "idle 1", 3, "Otherside Evenglen", 200, 200},
+        {"flowerCrown", "Leviathan's Tiara", 4, 4, "idle 1", 1, "Unweighed Evenglen"},
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
@@ -105,6 +109,8 @@ void generatePetData(const std::string& outputDir, const std::string& fileName, 
         generateObjectProperty(writer, 2, "thumbnailSprite", getSpritePath(pet, thumbnailSpriteType, thumbnailSpriteFrameNumber));
 
         generateObjectProperty(writer, 2, "activeLevel", pet.activeLevel);
+        
+        generateObjectProperty(writer, 2, "origin", pet.origin, true);
 
         // Length of each frame
         generateObjectProperty(writer, 2, "idleFrameLengthMs", pet.idleFrameLengthMs);
@@ -154,6 +160,7 @@ void generateSpriteDataTypes(std::ofstream& writer) {
     generateObjectProperty(writer, 1, "moveSprites", "string[]");
     generateObjectProperty(writer, 1, "thumbnailSprite", "string");
     generateObjectProperty(writer, 1, "activeLevel", "number");
+    generateObjectProperty(writer, 1, "origin", "string");
     generateObjectProperty(writer, 1, "idleFrameLengthMs", "number");
     generateObjectProperty(writer, 1, "moveFrameLengthMs", "number");
     generateObjectProperty(writer, 1, "moveSpeed", "number");

@@ -4,6 +4,7 @@ interface Props {
   internalPetName: string;
   externalPetName: string;
   petThumbnailSprite: string;
+  origin: string;
   currentSelectedPetName: string;
   setCurrentSelectedPetName: Function;
 }
@@ -12,6 +13,7 @@ const PetSelectionButton = ({
   internalPetName,
   externalPetName,
   petThumbnailSprite,
+  origin,
   currentSelectedPetName: selectedPetName,
   setCurrentSelectedPetName: setSelectedPetName,
 }: Props) => {
@@ -35,6 +37,11 @@ const PetSelectionButton = ({
     <button onClick={handleClick} className={buttonClasses}>
       <h4 className={styles["pet-name-text"]}>{externalPetName}</h4>
       <img src={petThumbnailSprite} className={styles["pet-thumbnail-image"]} />
+      {/* <p className={styles["origin-text"]}>
+        Origin:
+        <br />
+        {origin}
+      </p> */}
     </button>
   );
 };

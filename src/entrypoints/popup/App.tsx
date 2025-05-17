@@ -19,39 +19,16 @@ function App() {
       <h1 className={styles["popup-title"]}>Welcome to<br />Muna's Menagerie!</h1>
       <div className={styles["pet-selection-container"]}>
         {Object.keys(petData).map((internalPetName, index) => {
-          const externalPetName = petData[internalPetName].name;
-          const petThumbnailSprite = petData[internalPetName].thumbnailSprite;
           return (
-            <div key={index}>
-              <PetSelectionButton
-                internalPetName={internalPetName}
-                externalPetName={externalPetName}
-                petThumbnailSprite={petThumbnailSprite}
-                currentSelectedPetName={currentSelectedPetName}
-                setCurrentSelectedPetName={setCurrentSelectedPetName}
-              />
-              <PetSelectionButton
-                internalPetName={internalPetName}
-                externalPetName={externalPetName}
-                petThumbnailSprite={petThumbnailSprite}
-                currentSelectedPetName={currentSelectedPetName}
-                setCurrentSelectedPetName={setCurrentSelectedPetName}
-              />
-              <PetSelectionButton
-                internalPetName={internalPetName}
-                externalPetName={externalPetName}
-                petThumbnailSprite={petThumbnailSprite}
-                currentSelectedPetName={currentSelectedPetName}
-                setCurrentSelectedPetName={setCurrentSelectedPetName}
-              />
-              <PetSelectionButton
-                internalPetName={internalPetName}
-                externalPetName={externalPetName}
-                petThumbnailSprite={petThumbnailSprite}
-                currentSelectedPetName={currentSelectedPetName}
-                setCurrentSelectedPetName={setCurrentSelectedPetName}
-              />
-            </div>
+            <PetSelectionButton
+              key={index}
+              internalPetName={internalPetName}
+              externalPetName={petData[internalPetName].name}
+              petThumbnailSprite={petData[internalPetName].thumbnailSprite}
+              origin={petData[internalPetName].origin}
+              currentSelectedPetName={currentSelectedPetName}
+              setCurrentSelectedPetName={setCurrentSelectedPetName}
+            />
           );
         })}
       </div>

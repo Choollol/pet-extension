@@ -168,13 +168,15 @@ const Pet = () => {
         : PetMotionState.IDLE
     );
 
-    if (isCollidingLeft(true) !== NOT_COLLIDING_FLAG) {
-      moveDirectionRef.current = DIRECTION_RIGHT;
-    } else if (isCollidingRight(true) !== NOT_COLLIDING_FLAG) {
-      moveDirectionRef.current = DIRECTION_LEFT;
-    } else {
-      moveDirectionRef.current =
-        Math.random() < 0.5 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+    if (motionStateRef.current === PetMotionState.MOVE) {
+      if (isCollidingLeft(true) !== NOT_COLLIDING_FLAG) {
+        moveDirectionRef.current = DIRECTION_RIGHT;
+      } else if (isCollidingRight(true) !== NOT_COLLIDING_FLAG) {
+        moveDirectionRef.current = DIRECTION_LEFT;
+      } else {
+        moveDirectionRef.current =
+          Math.random() < 0.5 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+      }
     }
   };
 
