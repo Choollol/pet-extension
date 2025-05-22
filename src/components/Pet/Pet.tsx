@@ -306,11 +306,12 @@ const Pet = () => {
   };
 
   let petContainerClasses = `${styles["pet-container"]}`;
+
+  let petImageClasses = `${styles["pet-image"]}`;
   if (moveDirectionRef.current === DIRECTION_LEFT) {
-    petContainerClasses += ` ${styles["flip-horizontal"]}`;
+    petImageClasses += ` ${styles["flip-horizontal"]}`;
   }
 
-  const petImageClasses = `${styles["pet-image"]}`;
 
   return (
     <div

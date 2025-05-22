@@ -57,10 +57,10 @@ int main() {
             3000,
             500,
         },
-        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, "The Islands of Insight", 500, 500, 15},
+        {"armillaryRings", "Armillary Rings", 4, 4, "idle 1", 5, "The Islands of Insight", 500, 500, 16},
         {"gemini", "Gem and Nai", 6, 8, "idle 3", 1, "Above the Clouds", 200, 200, 40},
         {"windBird", "Evenglen Tumble", 4, 4, "idle 1", 3, "Otherside Evenglen", 200, 200},
-        {"flowerCrown", "Leviathan's Tiara", 4, 4, "idle 1", 1, "Unweighed Evenglen"},
+        {"flowerSprite", "Leviathan's Flower Golem", 2, 3, "idle 1", 5, "Unweighed Evenglen", 1000, 500, 16},
     };
 
     generatePetData(outputDir, "pet-data", "ts", petData);
