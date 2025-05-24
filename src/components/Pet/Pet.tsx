@@ -46,7 +46,7 @@ const Pet = () => {
     setIsDataLoaded(false);
   };
 
-  const saveData = async (sendResponse: (response?: any) => void) => {
+  const saveData = async () => {
     await Promise.all([
       storage.setItem(PET_POSITION_KEY, positionRef.current),
       storage.setItem(PET_MOTION_STATE_KEY, motionStateRef.current),
@@ -58,8 +58,6 @@ const Pet = () => {
       storage.setItem(PET_FRAME_NUMBER_KEY, frameNumberRef.current),
       storage.setItem(PET_FRAME_ELAPSED_TIME, frameElapsedTimeRef.current),
     ]);
-
-    sendResponse(true);
   };
 
   const loadData = async () => {
@@ -279,18 +277,32 @@ const Pet = () => {
       currentPetNameRef.current = currentPetName!;
     });
 
-    browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      if (message.type === MessageType.LOAD_PET_DATA) {
-        loadData();
-      } else if (message.type === MessageType.STORE_PET_DATA) {
-        saveData(sendResponse);
-        return true;
-      } else if (message.type === MessageType.CHANGE_PET) {
-        changePet(message.internalPetName);
-      } else if (message.type === MessageType.DISABLE_PET) {
-        disable();
+    browser.runtime.onMessage.addListener(
+      async (message, sender, sendResponse) => {
+        let wasMessageHandled = false;
+        if (message.type === MessageType.LOAD_PET_DATA) {
+          await loadData();
+          wasMessageHandled = true;
+        } else if (message.type === MessageType.STORE_PET_DATA) {
+          await saveData();
+          wasMessageHandled = true;
+        } else if (message.type === MessageType.CHANGE_PET) {
+          changePet(message.internalPetName);
+          wasMessageHandled = true;
+        } else if (message.type === MessageType.DISABLE_PET) {
+          disable();
+          wasMessageHandled = true;
+        } else if (
+          message.type === MessageType.CHECK_CONTENT_SCRIPT_EXISTENCE
+        ) {
+          wasMessageHandled = true;
+        }
+        if (wasMessageHandled) {
+          sendResponse(true);
+          return true;
+        }
       }
-    });
+    );
     loadData().then(() => {
       window.requestAnimationFrame(update);
     });

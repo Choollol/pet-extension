@@ -3,4 +3,5 @@ export enum MessageType {
   STORE_PET_DATA,
   CHANGE_PET,
   DISABLE_PET,
+  CHECK_CONTENT_SCRIPT_EXISTENCE,
 }

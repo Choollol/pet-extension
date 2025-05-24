@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "munas-menagerie",
+  "description": "An extension that adds pets to web pages.",
   "private": true,
   "version": "0.0.0",
   "type": "module",

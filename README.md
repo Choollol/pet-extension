@@ -1,3 +1,5 @@
-# WXT + React
+# Welcome to Muna's Menagerie!
 
-This template should help get you started developing with React in WXT.
+This is a browser extension that adds animated creature companions to web pages!
+
+Developed using the WXT framework and React.
