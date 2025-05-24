@@ -26,6 +26,8 @@ const PetSelectionButton = ({
     browser.tabs.sendMessage(tab.id!, message);
 
     setSelectedPetName(internalPetName);
+
+    storage.setItem(CURRENT_PET_NAME_KEY, internalPetName);
   };
 
   let buttonClasses = styles["pet-selection-button"];

@@ -42,24 +42,30 @@ const Pet = () => {
     setDummyState((dummyState) => dummyState ^ 1);
   };
 
-  const saveData = () => {
-    storage.setItem(CURRENT_PET_NAME_KEY, currentPetNameRef.current);
-    storage.setItem(PET_POSITION_KEY, positionRef.current);
-    storage.setItem(PET_MOTION_STATE_KEY, motionStateRef.current);
-    storage.setItem(
-      PET_TIME_UNTIL_MOTION_STATE_CHANGE_KEY,
-      timeUntilMotionStateChangeMsRef.current
-    );
-    storage.setItem(PET_MOVE_DIRECTION_KEY, moveDirectionRef.current);
-    storage.setItem(PET_FRAME_NUMBER_KEY, frameNumberRef.current);
-    storage.setItem(PET_FRAME_ELAPSED_TIME, frameElapsedTimeRef.current);
+  const disable = () => {
+    setIsDataLoaded(false);
+  };
+
+  const saveData = async (sendResponse: (response?: any) => void) => {
+    await Promise.all([
+      storage.setItem(PET_POSITION_KEY, positionRef.current),
+      storage.setItem(PET_MOTION_STATE_KEY, motionStateRef.current),
+      storage.setItem(
+        PET_TIME_UNTIL_MOTION_STATE_CHANGE_KEY,
+        timeUntilMotionStateChangeMsRef.current
+      ),
+      storage.setItem(PET_MOVE_DIRECTION_KEY, moveDirectionRef.current),
+      storage.setItem(PET_FRAME_NUMBER_KEY, frameNumberRef.current),
+      storage.setItem(PET_FRAME_ELAPSED_TIME, frameElapsedTimeRef.current),
+    ]);
+
+    sendResponse(true);
   };
 
   const loadData = async () => {
     if (isDataLoadingRef.current) {
       return;
     }
-    // console.log("Loading data");
     setIsDataLoaded(false);
     isDataLoadingRef.current = true;
     const [
@@ -85,9 +91,6 @@ const Pet = () => {
     }
 
     positionRef.current = storedPosition;
-    // console.log(
-    //   `Loaded position: ${positionRef.current.x} ${positionRef.current.y}`
-    // );
 
     if (storedPetName !== null) {
       currentPetNameRef.current = storedPetName;
@@ -95,30 +98,23 @@ const Pet = () => {
 
     if (storedMotionState !== null) {
       motionStateRef.current = storedMotionState;
-      // console.log("Loaded motion state: " + motionStateRef.current);
     }
     if (storedTimeUntilMotionStateChange !== null) {
       timeUntilMotionStateChangeMsRef.current =
         storedTimeUntilMotionStateChange;
-      // console.log("Loaded time until motion state change: " + timeUntilMotionStateChangeMsRef.current);
     }
     if (storedMoveDirection !== null) {
       moveDirectionRef.current = storedMoveDirection;
-      // console.log("Loaded stored move direction: " + moveDirectionRef.current);
     }
     if (storedFrameNumber !== null) {
       frameNumberRef.current = storedFrameNumber;
-      // console.log("Loaded frame number: " + frameNumberRef.current);
     }
     if (storedFrameElapsedTime !== null) {
       frameElapsedTimeRef.current = storedFrameElapsedTime;
-      // console.log("Loaded frame elapsed time: " + frameElapsedTimeRef.current);
     }
 
     setIsDataLoaded(true);
     isDataLoadingRef.current = false;
-
-    // console.log("Data loaded");
   };
 
   const changePet = (newPetName: string) => {
@@ -255,8 +251,6 @@ const Pet = () => {
 
       boundPosition();
 
-      saveData();
-
       timeUntilMotionStateChangeMsRef.current -= deltaTimeMs;
       frameElapsedTimeRef.current += deltaTimeMs;
     }
@@ -281,14 +275,20 @@ const Pet = () => {
   };
 
   const init = () => {
-    console.log("Initial setup");
-    browser.runtime.onMessage.addListener((message) => {
+    storage.getItem<string>(CURRENT_PET_NAME_KEY).then((currentPetName) => {
+      currentPetNameRef.current = currentPetName!;
+    });
+
+    browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.type === MessageType.LOAD_PET_DATA) {
         loadData();
       } else if (message.type === MessageType.STORE_PET_DATA) {
-        saveData();
+        saveData(sendResponse);
+        return true;
       } else if (message.type === MessageType.CHANGE_PET) {
         changePet(message.internalPetName);
+      } else if (message.type === MessageType.DISABLE_PET) {
+        disable();
       }
     });
     loadData().then(() => {
@@ -311,7 +311,6 @@ const Pet = () => {
   if (moveDirectionRef.current === DIRECTION_LEFT) {
     petImageClasses += ` ${styles["flip-horizontal"]}`;
   }
-
 
   return (
     <div

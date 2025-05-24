@@ -6,7 +6,8 @@ export default defineBackground(() => {
 
   const updatePetData = async () => {
     const [tab] = await browser.tabs.query({ active: true });
-    browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
+    browser.tabs.sendMessage(tab.id!, { type: MessageType.DISABLE_PET })
+    await browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
     browser.tabs.sendMessage(tab.id!, { type: MessageType.LOAD_PET_DATA });
     activeTabId = tab.id!;
   }
