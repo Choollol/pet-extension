@@ -35,7 +35,7 @@ const Pet = () => {
 
   const moveDirectionRef = useRef(DIRECTION_RIGHT);
 
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const doShowPetRef = useRef(false);
   const isDataLoadingRef = useRef(false);
 
   const triggerRerender = () => {
@@ -43,7 +43,8 @@ const Pet = () => {
   };
 
   const disable = () => {
-    setIsDataLoaded(false);
+    doShowPetRef.current = false;
+    triggerRerender();
   };
 
   const saveData = async () => {
@@ -64,8 +65,10 @@ const Pet = () => {
     if (isDataLoadingRef.current) {
       return;
     }
-    setIsDataLoaded(false);
+    doShowPetRef.current = false;
     isDataLoadingRef.current = true;
+    triggerRerender();
+
     const [
       storedPetName,
       storedPosition,
@@ -83,36 +86,35 @@ const Pet = () => {
       storage.getItem<number>(PET_FRAME_NUMBER_KEY),
       storage.getItem<number>(PET_FRAME_ELAPSED_TIME),
     ]);
-    if (!storedPosition) {
-      setIsDataLoaded(true);
-      return;
+    if (storedPosition) {
+      positionRef.current = storedPosition;
+
+      if (storedPetName !== null) {
+        currentPetNameRef.current = storedPetName;
+      }
+
+      if (storedMotionState !== null) {
+        motionStateRef.current = storedMotionState;
+      }
+      if (storedTimeUntilMotionStateChange !== null) {
+        timeUntilMotionStateChangeMsRef.current =
+          storedTimeUntilMotionStateChange;
+      }
+      if (storedMoveDirection !== null) {
+        moveDirectionRef.current = storedMoveDirection;
+      }
+      if (storedFrameNumber !== null) {
+        frameNumberRef.current = storedFrameNumber;
+      }
+      if (storedFrameElapsedTime !== null) {
+        frameElapsedTimeRef.current = storedFrameElapsedTime;
+      }
     }
 
-    positionRef.current = storedPosition;
-
-    if (storedPetName !== null) {
-      currentPetNameRef.current = storedPetName;
-    }
-
-    if (storedMotionState !== null) {
-      motionStateRef.current = storedMotionState;
-    }
-    if (storedTimeUntilMotionStateChange !== null) {
-      timeUntilMotionStateChangeMsRef.current =
-        storedTimeUntilMotionStateChange;
-    }
-    if (storedMoveDirection !== null) {
-      moveDirectionRef.current = storedMoveDirection;
-    }
-    if (storedFrameNumber !== null) {
-      frameNumberRef.current = storedFrameNumber;
-    }
-    if (storedFrameElapsedTime !== null) {
-      frameElapsedTimeRef.current = storedFrameElapsedTime;
-    }
-
-    setIsDataLoaded(true);
+    doShowPetRef.current = true;
     isDataLoadingRef.current = false;
+    triggerRerender();
+    console.log("data loaded");
   };
 
   const changePet = (newPetName: string) => {
@@ -217,7 +219,7 @@ const Pet = () => {
     }
   };
 
-  const update = (time: number) => {
+  const update = async (time: number) => {
     if (previousTimeRef.current !== 0) {
       const deltaTimeMs = time - previousTimeRef.current;
       const deltaTimeSecs = deltaTimeMs / 1000;
@@ -248,6 +250,10 @@ const Pet = () => {
       }
 
       boundPosition();
+
+      if (doShowPetRef.current) {
+        await saveData();
+      }
 
       timeUntilMotionStateChangeMsRef.current -= deltaTimeMs;
       frameElapsedTimeRef.current += deltaTimeMs;
@@ -332,7 +338,7 @@ const Pet = () => {
       onClick={handleClick}
       onContextMenu={handleClick}
     >
-      {isDataLoaded && (
+      {doShowPetRef.current && (
         <img
           ref={petImageRef}
           className={petImageClasses}

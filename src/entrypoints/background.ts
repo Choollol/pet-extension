@@ -4,39 +4,48 @@ import { CURRENT_PET_NAME_KEY } from "@/utils/storage-keys";
 export default defineBackground(() => {
   let activeTabId: number;
   let doesActiveTabHaveContentScript: boolean;
+  let isUpdatingPetData = false;
 
-  const updatePetData = async () => {
-    const [tab] = await browser.tabs.query({ active: true });
+  const updatePetData = async (tabId: number) => {
+    if (isUpdatingPetData) {
+      // return;
+    }
+    isUpdatingPetData = true;
+
+    console.log(`tab id: ${tabId}`);
 
     const didPreviousTabHaveContentScript = doesActiveTabHaveContentScript;
 
     try {
-      await browser.tabs.sendMessage(tab.id!, { type: MessageType.DISABLE_PET });
+      await browser.tabs.sendMessage(tabId, { type: MessageType.DISABLE_PET });
       doesActiveTabHaveContentScript = true;
     }
     catch {
       doesActiveTabHaveContentScript = false;
     }
-    if (didPreviousTabHaveContentScript) {
-      await browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
+    try {
+      if (didPreviousTabHaveContentScript && tabId !== activeTabId) {
+        await browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
+      }
+      if (doesActiveTabHaveContentScript) {
+        await browser.tabs.sendMessage(tabId, { type: MessageType.LOAD_PET_DATA });
+      }
     }
-    if (doesActiveTabHaveContentScript) {
-      await browser.tabs.sendMessage(tab.id!, { type: MessageType.LOAD_PET_DATA });
+    catch (error) {
+      console.log(error);
     }
 
-    activeTabId = tab.id!;
+    activeTabId = tabId;
+
+    isUpdatingPetData = false;
   }
 
   browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    updatePetData();
+    updatePetData(tabId);
   });
 
-  browser.tabs.onActivated.addListener(() => {
-    updatePetData();
-  });
-
-  browser.tabs.onCreated.addListener((tab) => {
-    updatePetData();
+  browser.tabs.onActivated.addListener((activeInfo) => {
+    updatePetData(activeInfo.tabId);
   });
 
   browser.tabs.query({ active: true }).then(async ([tab]) => {
