@@ -18,7 +18,8 @@ const PetSelectionButton = ({
   setCurrentSelectedPetName: setSelectedPetName,
 }: Props) => {
   const handleClick = async () => {
-    const [tab] = await browser.tabs.query({ active: true });
+    // const tab = (await browser.windows.getCurrent()).tabs?.find((tab) => tab.active)!;
+    const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
     const message = {
       type: MessageType.CHANGE_PET,
       internalPetName: internalPetName,

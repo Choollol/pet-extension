@@ -114,7 +114,6 @@ const Pet = () => {
     doShowPetRef.current = true;
     isDataLoadingRef.current = false;
     triggerRerender();
-    console.log("data loaded");
   };
 
   const changePet = (newPetName: string) => {

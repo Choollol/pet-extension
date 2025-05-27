@@ -8,11 +8,9 @@ export default defineBackground(() => {
 
   const updatePetData = async (tabId: number) => {
     if (isUpdatingPetData) {
-      // return;
+      return;
     }
     isUpdatingPetData = true;
-
-    console.log(`tab id: ${tabId}`);
 
     const didPreviousTabHaveContentScript = doesActiveTabHaveContentScript;
 
@@ -24,15 +22,14 @@ export default defineBackground(() => {
       doesActiveTabHaveContentScript = false;
     }
     try {
+      await browser.tabs.get(activeTabId);
       if (didPreviousTabHaveContentScript && tabId !== activeTabId) {
         await browser.tabs.sendMessage(activeTabId, { type: MessageType.STORE_PET_DATA });
       }
-      if (doesActiveTabHaveContentScript) {
-        await browser.tabs.sendMessage(tabId, { type: MessageType.LOAD_PET_DATA });
-      }
     }
-    catch (error) {
-      console.log(error);
+    catch { /* Previous tab was deleted, no need to do anything */ }
+    if (doesActiveTabHaveContentScript) {
+      await browser.tabs.sendMessage(tabId, { type: MessageType.LOAD_PET_DATA });
     }
 
     activeTabId = tabId;
