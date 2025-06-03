@@ -277,10 +277,9 @@ const Pet = () => {
     triggerRerender();
   };
 
-  const init = () => {
-    storage.getItem<string>(CURRENT_PET_NAME_KEY).then((currentPetName) => {
-      currentPetNameRef.current = currentPetName!;
-    });
+  const init = async () => {
+    const currentPetName = await storage.getItem<string>(CURRENT_PET_NAME_KEY);
+    currentPetNameRef.current = currentPetName!;
 
     browser.runtime.onMessage.addListener(
       async (message, sender, sendResponse) => {
@@ -308,9 +307,8 @@ const Pet = () => {
         }
       }
     );
-    loadData().then(() => {
-      window.requestAnimationFrame(update);
-    });
+    await loadData();
+    window.requestAnimationFrame(update);
   };
 
   useEffect(() => {

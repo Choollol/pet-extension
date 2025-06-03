@@ -68,5 +68,9 @@ export default defineBackground(() => {
     }
   });
 
-  storage.setItem(CURRENT_PET_NAME_KEY, DEFAULT_PET_NAME);
+  storage.getItem(CURRENT_PET_NAME_KEY).then((storedPetName) => {
+    if (!storedPetName) {
+      storage.setItem(CURRENT_PET_NAME_KEY, DEFAULT_PET_NAME);
+    }
+  });
 });

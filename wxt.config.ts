@@ -13,6 +13,6 @@ export default defineConfig({
     }],
   },
   autoIcons: {
-    enabled: true,
+    enabled: false,
   }
 });
