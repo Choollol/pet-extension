@@ -50,7 +50,10 @@ export default defineBackground(() => {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (tab) {
       if (doesActiveTabHaveContentScript) {
-        await browser.tabs.sendMessage(activeTabId, { type: MessageType.DISABLE_PET });
+        try {
+          await browser.tabs.sendMessage(activeTabId, { type: MessageType.DISABLE_PET });
+        }
+        catch { /* Previous window was deleted, no need to do anything */ }
       }
       updatePetData(tab.id!);
     }

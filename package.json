@@ -2,7 +2,7 @@
   "name": "Muna's Menagerie",
   "description": "An extension that adds pets to web pages.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
